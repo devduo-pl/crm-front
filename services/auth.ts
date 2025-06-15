@@ -1,5 +1,4 @@
 import { fetchApi } from "@/lib/api-client";
-import { AuthTokens } from "@/lib/auth";
 
 export interface LoginCredentials {
   email: string;
@@ -58,7 +57,7 @@ export const authService = {
    */
   refreshToken: async (): Promise<boolean> => {
     try {
-      const response = await fetchApi<RefreshTokenResponse>("/auth/refresh", {
+      await fetchApi<RefreshTokenResponse>("/auth/refresh", {
         method: "POST",
       });
       return true;
@@ -73,7 +72,7 @@ export const authService = {
    */
   getCurrentUser: async () => {
     try {
-      const response = await fetchApi<LoginResponse>("/auth/profile", {});
+      const response = await fetchApi<LoginResponse>("/auth/me", {});
       return response.user;
     } catch {
       return null;
