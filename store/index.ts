@@ -38,12 +38,13 @@ interface AuthState {
   logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
   checkAuth: () => Promise<void>;
+  verifyAccount: (token: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         user: null,
         isLoading: false,
         setUser: (user) => set({ user }),
@@ -65,7 +66,7 @@ export const useAuthStore = create<AuthState>()(
           try {
             await authService.logout();
             set({ user: null, isLoading: false });
-          } catch (error) {
+          } catch {
             // Even if server logout fails, clear user state
             set({ user: null, isLoading: false });
           }
@@ -90,6 +91,16 @@ export const useAuthStore = create<AuthState>()(
             set({ user });
           } catch {
             set({ user: null });
+          }
+        },
+
+        verifyAccount: async (token: string) => {
+          try {
+            await authService.verifyAccount(token);
+            set({ isLoading: false });
+          } catch {
+            set({ isLoading: false });
+            throw new Error("Account verification failed");
           }
         },
       }),

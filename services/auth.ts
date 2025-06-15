@@ -72,7 +72,13 @@ export const authService = {
    */
   getCurrentUser: async () => {
     try {
-      const response = await fetchApi<LoginResponse>("/auth/me", {});
+      const response = await fetchApi<LoginResponse>("/auth/profile", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
       return response.user;
     } catch {
       return null;
@@ -121,9 +127,8 @@ export const authService = {
    * Verify account with token
    */
   verifyAccount: async (token: string): Promise<void> => {
-    await fetchApi("/auth/verify-account", {
+    await fetchApi(`/auth/verify-account?token=${encodeURIComponent(token)}`, {
       method: "POST",
-      body: JSON.stringify({ token }),
     });
   },
 };

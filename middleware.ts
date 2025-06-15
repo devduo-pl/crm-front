@@ -18,12 +18,9 @@ function isProtectedRoute(pathname: string): boolean {
 }
 
 function isPublicRoute(pathname: string): boolean {
-  // Exact match for root, or check if it matches any public route exactly or starts with it
-  // but make sure it's not a protected route first
   if (isProtectedRoute(pathname)) {
     return false;
   }
-
   return PUBLIC_ROUTES.some((route) => {
     if (route === "/") {
       return pathname === "/";
@@ -44,20 +41,18 @@ export function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
 
-  // Check if user is authenticated
-  const isAuthenticated = accessToken && !isTokenExpired(accessToken);
-
-  // Debug logging in development
-  if (process.env.NODE_ENV === "development") {
-    console.log("🔧 Middleware Debug:", {
-      pathname,
-      isAuthenticated,
-      hasAccessToken: !!accessToken,
-      hasRefreshToken: !!refreshToken,
-      isProtected: isProtectedRoute(pathname),
-      isPublic: isPublicRoute(pathname),
-    });
+  // Check if token is expired
+  let tokenExpired = false;
+  if (accessToken) {
+    try {
+      tokenExpired = isTokenExpired(accessToken);
+    } catch {
+      tokenExpired = true; // Treat invalid tokens as expired
+    }
   }
+
+  // Check if user is authenticated
+  const isAuthenticated = accessToken && !tokenExpired;
 
   // If user is authenticated and on an auth-related public route, redirect to dashboard
   if (isAuthenticated && (pathname === "/login" || pathname === "/signup")) {
@@ -70,12 +65,7 @@ export function middleware(request: NextRequest) {
   }
 
   // If token is expired but we have a refresh token, add a header to trigger refresh
-  if (
-    accessToken &&
-    isTokenExpired(accessToken) &&
-    refreshToken &&
-    !isPublicRoute(pathname)
-  ) {
+  if (accessToken && tokenExpired && refreshToken && !isPublicRoute(pathname)) {
     const response = NextResponse.next();
     response.headers.set("x-token-expired", "true");
     return response;
