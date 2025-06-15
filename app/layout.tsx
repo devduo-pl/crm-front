@@ -1,4 +1,6 @@
 import "@/styles/globals.css";
+import { Providers } from "@/providers/Providers";
+import { ThemeScript } from "@/components/ThemeScript";
 
 export default function RootLayout({
   children,
@@ -7,7 +9,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <head>
+        <ThemeScript />
+      </head>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
