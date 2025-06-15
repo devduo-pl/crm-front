@@ -1,4 +1,6 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { API_CONFIG } from "./config";
+
+const BASE_URL = API_CONFIG.BASE_URL;
 
 export interface ApiErrorResponse {
   message: string;
@@ -37,12 +39,17 @@ export async function fetchApi<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
+
+  // Prepare headers
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
+  };
+
   const response = await fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
+    headers,
+    credentials: "include",
   });
 
   return handleResponse<T>(response);

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { authService } from "@/services/auth";
 
 interface AppState {
   // Add your state properties here
@@ -22,23 +23,79 @@ export const useAppStore = create<AppState>()(
   )
 );
 
-// Example of a separate store for a specific feature
+// Auth store for managing authentication state
 interface AuthState {
-  user: null | { id: string; email: string };
+  user: null | {
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+  };
+  isLoading: boolean;
   setUser: (user: AuthState["user"]) => void;
-  logout: () => void;
+  setLoading: (loading: boolean) => void;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
+  checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         user: null,
+        isLoading: false,
         setUser: (user) => set({ user }),
-        logout: () => set({ user: null }),
+        setLoading: (loading) => set({ isLoading: loading }),
+
+        login: async (email: string, password: string) => {
+          set({ isLoading: true });
+          try {
+            const response = await authService.login({ email, password });
+            set({ user: response.user, isLoading: false });
+          } catch (error) {
+            set({ isLoading: false });
+            throw error;
+          }
+        },
+
+        logout: async () => {
+          set({ isLoading: true });
+          try {
+            await authService.logout();
+            set({ user: null, isLoading: false });
+          } catch (error) {
+            // Even if server logout fails, clear user state
+            set({ user: null, isLoading: false });
+          }
+        },
+
+        refreshToken: async () => {
+          const success = await authService.refreshToken();
+          if (success) {
+            // Get updated user info
+            const user = await authService.getCurrentUser();
+            set({ user });
+            return true;
+          } else {
+            set({ user: null });
+            return false;
+          }
+        },
+
+        checkAuth: async () => {
+          try {
+            const user = await authService.getCurrentUser();
+            set({ user });
+          } catch {
+            set({ user: null });
+          }
+        },
       }),
       {
         name: "auth-storage",
+        partialize: (state) => ({ user: state.user }), // Only persist user data
       }
     )
   )
