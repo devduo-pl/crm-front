@@ -24,6 +24,7 @@ export interface UsersQueryParams {
   roleId?: number;
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface PaginatedResponse<T> {
