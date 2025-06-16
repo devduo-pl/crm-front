@@ -1,10 +1,11 @@
 import { fetchApi, buildQueryString } from "@/lib/api-client";
 import type {
   User,
+  UserCreateData,
   UserUpdateData,
   UsersQueryParams,
   PaginatedResponse,
-} from "@/types/user";
+} from "./types";
 
 export const usersService = {
   /**
@@ -22,6 +23,16 @@ export const usersService = {
    */
   getUser: async (id: number): Promise<User> => {
     return fetchApi<User>(`/users/${id}`);
+  },
+
+  /**
+   * Create a new user
+   */
+  createUser: async (data: UserCreateData): Promise<User> => {
+    return fetchApi<User>("/users", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   },
 
   /**
@@ -51,4 +62,4 @@ export const usersService = {
       method: "PUT",
     });
   },
-};
+}; 

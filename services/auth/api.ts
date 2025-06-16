@@ -1,27 +1,12 @@
 import { fetchApi } from "@/lib/api-client";
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-}
-
-export interface RefreshTokenResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-}
+import type {
+  LoginCredentials,
+  LoginResponse,
+  RefreshTokenResponse,
+  RegisterUserData,
+  PasswordRecoveryRequest,
+  ResetPasswordRequest,
+} from "./types";
 
 export const authService = {
   /**
@@ -89,12 +74,7 @@ export const authService = {
    * Register new user
    * Cookies are set by the server
    */
-  register: async (userData: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }): Promise<LoginResponse> => {
+  register: async (userData: RegisterUserData): Promise<LoginResponse> => {
     const response = await fetchApi<LoginResponse>("/auth/register", {
       method: "POST",
       body: JSON.stringify(userData),
@@ -109,7 +89,7 @@ export const authService = {
   requestPasswordRecovery: async (email: string): Promise<void> => {
     await fetchApi("/auth/password-recovery", {
       method: "POST",
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email } as PasswordRecoveryRequest),
     });
   },
 
@@ -119,7 +99,7 @@ export const authService = {
   resetPassword: async (token: string, newPassword: string): Promise<void> => {
     await fetchApi("/auth/reset-password", {
       method: "POST",
-      body: JSON.stringify({ token, password: newPassword }),
+      body: JSON.stringify({ token, password: newPassword } as ResetPasswordRequest),
     });
   },
 
@@ -131,4 +111,4 @@ export const authService = {
       method: "POST",
     });
   },
-};
+}; 

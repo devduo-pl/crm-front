@@ -4,10 +4,10 @@ import { isTokenExpired } from "./lib/auth";
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   "/",
+  "/login",
   "/signup",
   "/password-recovery",
   "/verify-account",
-  "/login",
 ];
 
 // Protected routes that require authentication
@@ -54,12 +54,12 @@ export function middleware(request: NextRequest) {
   // Check if user is authenticated
   const isAuthenticated = accessToken && !tokenExpired;
 
-  // If user is authenticated and on an auth-related public route, redirect to dashboard
-  if (isAuthenticated && (pathname === "/login" || pathname === "/signup")) {
+  // If user is authenticated and on home page or auth-related routes, redirect to dashboard
+  if (isAuthenticated && (pathname === "/" || pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // If user is not authenticated and trying to access protected route
+  // If user is not authenticated and trying to access protected route, redirect to login
   if (!isAuthenticated && isProtectedRoute(pathname)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }

@@ -8,6 +8,12 @@ export interface User {
   createdAt: string;
 }
 
+export interface UserCreateData {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface UserUpdateData {
   firstName: string;
   lastName: string;
