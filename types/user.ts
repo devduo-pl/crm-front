@@ -4,7 +4,7 @@ export interface User {
   lastName: string;
   email: string;
   isActive: boolean;
-  roleId: number;
+  roles: string[];
   createdAt: string;
 }
 
@@ -27,10 +27,10 @@ export interface UsersQueryParams {
   firstName?: string;
   lastName?: string;
   isActive?: boolean;
-  roleId?: number;
+  roles?: string[];
   sortBy?: string;
   sortOrder?: "ASC" | "DESC";
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | string[] | undefined;
 }
 
 export interface PaginatedResponse<T> {
