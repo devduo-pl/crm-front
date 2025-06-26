@@ -1,4 +1,4 @@
-import { AuthForm } from "../organisms/AuthForm";
+import { AuthForm } from "@/components/organisms/AuthForm";
 
 export function LoginPage() {
   return (

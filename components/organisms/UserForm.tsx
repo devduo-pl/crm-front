@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import type { User } from "@/types/user";
 
 export interface UserFormData {
@@ -59,25 +59,28 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSubmit(formData);
     }
   };
 
   const handleInputChange = (field: keyof UserFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="firstName"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           First Name *
         </label>
         <Input
@@ -95,7 +98,10 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="lastName"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Last Name *
         </label>
         <Input
@@ -113,7 +119,10 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Email *
         </label>
         <Input
@@ -133,4 +142,4 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
       <button type="submit" className="hidden" />
     </form>
   );
-} 
+}

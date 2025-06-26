@@ -1,4 +1,4 @@
-import { Icons } from "../../atoms/Icons";
+import { Icons } from "@/components/atoms/Icons";
 
 interface PopupHeaderProps {
   title: string;
@@ -18,4 +18,4 @@ export function PopupHeader({ title, onClose }: PopupHeaderProps) {
       </button>
     </div>
   );
-} 
+}

@@ -1,27 +1,27 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { NavItem } from "../atoms/NavItem";
-import { NavSection } from "../atoms/NavSection";
-import { Icons } from "../atoms/Icons";
+import { NavItem } from "@/components/atoms/NavItem";
+import { NavSection } from "@/components/atoms/NavSection";
+import { Icons } from "@/components/atoms/Icons";
 
 export function Sidebar() {
   const pathname = usePathname();
 
   const navigation = [
     {
-      name: 'Dashboard',
-      href: '/dashboard',
+      name: "Dashboard",
+      href: "/dashboard",
       icon: <Icons.Dashboard />,
     },
     {
-      name: 'Users',
-      href: '/users',
+      name: "Users",
+      href: "/users",
       icon: <Icons.Users />,
     },
     {
-      name: 'Roles',
-      href: '/roles',
+      name: "Roles",
+      href: "/roles",
       icon: <Icons.Shield />,
     },
   ];
@@ -65,7 +65,7 @@ export function Sidebar() {
           <NavItem
             href="/settings"
             icon={<Icons.Settings />}
-            isActive={pathname === '/settings'}
+            isActive={pathname === "/settings"}
           >
             Settings
           </NavItem>
@@ -73,4 +73,4 @@ export function Sidebar() {
       </div>
     </div>
   );
-} 
+}

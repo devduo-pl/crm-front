@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import type { Role } from "@/services/roles";
 
 export interface RoleFormData {
@@ -53,25 +53,28 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSubmit(formData);
     }
   };
 
   const handleInputChange = (field: keyof RoleFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Role Name *
         </label>
         <Input
@@ -89,7 +92,10 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
       </div>
 
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Description *
         </label>
         <textarea
@@ -114,4 +120,4 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
       <button type="submit" className="hidden" />
     </form>
   );
-} 
+}

@@ -5,7 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../ui/table";
+} from "@/components/ui/table";
 import { TableColumn, TableAction } from "./types";
 
 interface TableLoadingStateProps<T = Record<string, unknown>> {
@@ -14,10 +14,10 @@ interface TableLoadingStateProps<T = Record<string, unknown>> {
   loadingRows?: number;
 }
 
-export function TableLoadingState<T = Record<string, unknown>>({ 
-  columns, 
-  actions = [], 
-  loadingRows = 5 
+export function TableLoadingState<T = Record<string, unknown>>({
+  columns,
+  actions = [],
+  loadingRows = 5,
 }: TableLoadingStateProps<T>) {
   const hasActions = actions.length > 0;
 
@@ -31,7 +31,9 @@ export function TableLoadingState<T = Record<string, unknown>>({
                 {column.header}
               </TableHead>
             ))}
-            {hasActions && <TableHead className="text-right">Actions</TableHead>}
+            {hasActions && (
+              <TableHead className="text-right">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -60,4 +62,4 @@ export function TableLoadingState<T = Record<string, unknown>>({
       </Table>
     </div>
   );
-} 
+}

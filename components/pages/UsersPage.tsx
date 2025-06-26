@@ -7,11 +7,11 @@ import {
   TableAction,
   PaginationInfo,
   PageHeaderAction,
-} from "../molecules/Table";
-import { Popup, PopupAction } from "../molecules/Popup";
-import { ConfirmationDialog } from "../molecules/ConfirmationDialog";
-import { UserForm, UserFormData } from "../organisms/UserForm";
-import { StatusBadge } from "../atoms/StatusBadge";
+} from "@/components/molecules/Table";
+import { Popup, PopupAction } from "@/components/molecules/Popup";
+import { ConfirmationDialog } from "@/components/molecules/ConfirmationDialog";
+import { UserForm, UserFormData } from "@/components/organisms/UserForm";
+import { StatusBadge } from "@/components/atoms/StatusBadge";
 import {
   useUsers,
   useBanUser,

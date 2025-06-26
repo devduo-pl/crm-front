@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { Icons } from '../../atoms/Icons';
-import { Alert } from './types';
+import { useEffect } from "react";
+import { Icons } from "@/components/atoms/Icons";
+import { Alert } from "./types";
 
 interface AlertItemProps {
   alert: Alert;
@@ -24,32 +24,32 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
   // Variant styles
   const variantStyles = {
     success: {
-      container: 'bg-green-50 border-green-200',
-      icon: 'text-green-600',
-      title: 'text-green-800',
-      message: 'text-green-700',
-      closeButton: 'text-green-500 hover:text-green-600',
+      container: "bg-green-50 border-green-200",
+      icon: "text-green-600",
+      title: "text-green-800",
+      message: "text-green-700",
+      closeButton: "text-green-500 hover:text-green-600",
     },
     error: {
-      container: 'bg-red-50 border-red-200',
-      icon: 'text-red-600',
-      title: 'text-red-800',
-      message: 'text-red-700',
-      closeButton: 'text-red-500 hover:text-red-600',
+      container: "bg-red-50 border-red-200",
+      icon: "text-red-600",
+      title: "text-red-800",
+      message: "text-red-700",
+      closeButton: "text-red-500 hover:text-red-600",
     },
     warning: {
-      container: 'bg-yellow-50 border-yellow-200',
-      icon: 'text-yellow-600',
-      title: 'text-yellow-800',
-      message: 'text-yellow-700',
-      closeButton: 'text-yellow-500 hover:text-yellow-600',
+      container: "bg-yellow-50 border-yellow-200",
+      icon: "text-yellow-600",
+      title: "text-yellow-800",
+      message: "text-yellow-700",
+      closeButton: "text-yellow-500 hover:text-yellow-600",
     },
     info: {
-      container: 'bg-blue-50 border-blue-200',
-      icon: 'text-blue-600',
-      title: 'text-blue-800',
-      message: 'text-blue-700',
-      closeButton: 'text-blue-500 hover:text-blue-600',
+      container: "bg-blue-50 border-blue-200",
+      icon: "text-blue-600",
+      title: "text-blue-800",
+      message: "text-blue-700",
+      closeButton: "text-blue-500 hover:text-blue-600",
     },
   };
 
@@ -58,13 +58,13 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
   // Get icon based on type
   const getIcon = () => {
     switch (type) {
-      case 'success':
+      case "success":
         return <Icons.Check className="w-5 h-5" />;
-      case 'error':
+      case "error":
         return <Icons.AlertCircle className="w-5 h-5" />;
-      case 'warning':
+      case "warning":
         return <Icons.AlertTriangle className="w-5 h-5" />;
-      case 'info':
+      case "info":
         return <Icons.Info className="w-5 h-5" />;
     }
   };
@@ -78,18 +78,12 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
       `}
     >
       <div className="flex items-start">
-        <div className={`flex-shrink-0 ${styles.icon}`}>
-          {getIcon()}
-        </div>
+        <div className={`flex-shrink-0 ${styles.icon}`}>{getIcon()}</div>
 
         <div className="ml-3 flex-1">
-          <h3 className={`text-sm font-medium ${styles.title}`}>
-            {title}
-          </h3>
+          <h3 className={`text-sm font-medium ${styles.title}`}>{title}</h3>
           {message && (
-            <p className={`mt-1 text-sm ${styles.message}`}>
-              {message}
-            </p>
+            <p className={`mt-1 text-sm ${styles.message}`}>{message}</p>
           )}
           {action && (
             <div className="mt-2">
@@ -119,4 +113,4 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
       </div>
     </div>
   );
-} 
+}

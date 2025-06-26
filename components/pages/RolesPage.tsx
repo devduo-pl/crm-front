@@ -6,10 +6,10 @@ import {
   TableColumn,
   TableAction,
   PageHeaderAction,
-} from "../molecules/Table";
-import { Popup, PopupAction } from "../molecules/Popup";
-import { ConfirmationDialog } from "../molecules/ConfirmationDialog";
-import { RoleForm, RoleFormData } from "../organisms/RoleForm";
+} from "@/components/molecules/Table";
+import { Popup, PopupAction } from "@/components/molecules/Popup";
+import { ConfirmationDialog } from "@/components/molecules/ConfirmationDialog";
+import { RoleForm, RoleFormData } from "@/components/organisms/RoleForm";
 import {
   useRoles,
   useCreateRole,
