@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { authService } from "@/services/auth";
+import type { User } from "@/types/user";
 
 interface AppState {
   // Add your state properties here
@@ -25,14 +26,9 @@ export const useAppStore = create<AppState>()(
 
 // Auth store for managing authentication state
 interface AuthState {
-  user: null | {
-    id: string;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-  };
+  user: User | null;
   isLoading: boolean;
-  setUser: (user: AuthState["user"]) => void;
+  setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;

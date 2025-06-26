@@ -1,7 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/Button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { TableProps } from "./types";
 import { TableContent } from "./TableContent";
 import { TableLoadingState } from "./TableLoadingState";
@@ -28,12 +34,11 @@ export function Table<T = Record<string, unknown>>({
   loadingRows = 5,
   showCard = true,
 }: TableProps<T>) {
-
   // Generate card description based on loading state and data
   const getCardDescription = () => {
     if (cardDescription) return cardDescription;
     if (description) return description;
-    if (isLoading) return 'Loading...';
+    if (isLoading) return "Loading...";
     if (pagination) return `${pagination.total} items total`;
     return `${data.length} items`;
   };
@@ -62,14 +67,14 @@ export function Table<T = Record<string, unknown>>({
     if (isLoading) {
       const loadingContent = (
         <>
-          <TableLoadingState 
-            columns={columns} 
-            actions={actions} 
-            loadingRows={loadingRows} 
+          <TableLoadingState
+            columns={columns}
+            actions={actions}
+            loadingRows={loadingRows}
           />
           {pagination && onPageChange && (
-            <TablePagination 
-              pagination={pagination} 
+            <TablePagination
+              pagination={pagination}
               onPageChange={onPageChange}
               minItemsForPagination={minItemsForPagination}
             />
@@ -100,9 +105,7 @@ export function Table<T = Record<string, unknown>>({
               )}
             </div>
           </CardHeader>
-          <CardContent>
-            {loadingContent}
-          </CardContent>
+          <CardContent>{loadingContent}</CardContent>
         </Card>
       ) : (
         loadingContent
@@ -120,8 +123,8 @@ export function Table<T = Record<string, unknown>>({
           emptyDescription={emptyDescription}
         />
         {pagination && onPageChange && (
-          <TablePagination 
-            pagination={pagination} 
+          <TablePagination
+            pagination={pagination}
             onPageChange={onPageChange}
             minItemsForPagination={minItemsForPagination}
           />
@@ -152,9 +155,7 @@ export function Table<T = Record<string, unknown>>({
             )}
           </div>
         </CardHeader>
-        <CardContent>
-          {tableContent}
-        </CardContent>
+        <CardContent>{tableContent}</CardContent>
       </Card>
     ) : (
       tableContent
@@ -162,4 +163,4 @@ export function Table<T = Record<string, unknown>>({
   };
 
   return <MainContent />;
-} 
+}

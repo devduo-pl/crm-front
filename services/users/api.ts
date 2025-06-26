@@ -14,7 +14,9 @@ export const usersService = {
   getUsers: async (
     params: UsersQueryParams = {}
   ): Promise<PaginatedResponse<User>> => {
-    const queryString = buildQueryString(params);
+    const queryString = buildQueryString(
+      params as Record<string, string | number | boolean | undefined>
+    );
     return fetchApi<PaginatedResponse<User>>(`/users${queryString}`);
   },
 
@@ -62,4 +64,4 @@ export const usersService = {
       method: "PUT",
     });
   },
-}; 
+};

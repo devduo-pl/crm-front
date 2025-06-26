@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import { useNotification } from "@/hooks/useNotification";
-import { Icons } from "../../atoms/Icons";
-import { Button } from "../../ui/Button";
+import { Icons } from "@/components/atoms/Icons";
+import { Button } from "@/components/ui/button";
 
 export function UserMenu() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -15,17 +15,17 @@ export function UserMenu() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    
+
     try {
       await logout();
       showSuccess("Signed Out", "You have been successfully signed out.");
-      
+
       // Immediate redirect
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
       showError(
-        "Sign Out Failed", 
+        "Sign Out Failed",
         "There was an issue signing you out. Please try again."
       );
     } finally {
@@ -37,9 +37,10 @@ export function UserMenu() {
     return null;
   }
 
-  const displayName = user.firstName && user.lastName 
-    ? `${user.firstName} ${user.lastName}`
-    : user.email;
+  const displayName =
+    user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.email;
 
   return (
     <div className="flex items-center space-x-3 w-full justify-between">
@@ -47,7 +48,9 @@ export function UserMenu() {
       <div className="flex items-center space-x-2">
         <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
           <span className="text-white text-sm font-medium">
-            {user.firstName ? user.firstName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+            {user.firstName
+              ? user.firstName.charAt(0).toUpperCase()
+              : user.email.charAt(0).toUpperCase()}
           </span>
         </div>
         <div className="hidden sm:block">
@@ -75,4 +78,4 @@ export function UserMenu() {
       </Button>
     </div>
   );
-} 
+}

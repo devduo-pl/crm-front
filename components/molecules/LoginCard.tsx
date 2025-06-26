@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
 import Link from "next/link";
-import { Button } from "../ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { FormField } from "../atoms/FormField";
-import { ErrorMessage } from "../atoms/ErrorMessage";
-import { LoadingButton } from "../atoms/LoadingButton";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FormField } from "@/components/atoms/FormField";
+import { ErrorMessage } from "@/components/atoms/ErrorMessage";
+import { LoadingButton } from "@/components/atoms/LoadingButton";
 
 export function LoginCard() {
   const [email, setEmail] = useState("");
@@ -51,7 +51,7 @@ export function LoginCard() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
             />
-            
+
             <FormField
               id="password"
               label="Password"
@@ -89,18 +89,14 @@ export function LoginCard() {
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="outline" asChild className="w-full">
-              <Link href="/signup">
-                Create new account
-              </Link>
+              <Link href="/signup">Create new account</Link>
             </Button>
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/password-recovery">
-                Forgot your password?
-              </Link>
+              <Link href="/password-recovery">Forgot your password?</Link>
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-} 
+}

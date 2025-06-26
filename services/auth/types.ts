@@ -1,24 +1,18 @@
+import type { User } from "@/types/user";
+
 export interface LoginCredentials {
   email: string;
   password: string;
 }
 
 export interface LoginResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
+  user: User;
+  message?: string;
 }
 
 export interface RefreshTokenResponse {
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
+  user: User;
+  message?: string;
 }
 
 export interface RegisterUserData {
@@ -35,4 +29,4 @@ export interface PasswordRecoveryRequest {
 export interface ResetPasswordRequest {
   token: string;
   password: string;
-} 
+}

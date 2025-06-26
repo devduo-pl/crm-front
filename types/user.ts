@@ -6,6 +6,7 @@ export interface User {
   isActive: boolean;
   roles: string[];
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface UserCreateData {

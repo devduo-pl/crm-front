@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "../../ui/Button";
+import { Button } from "@/components/ui/button";
 import { ConfirmationDialogProps } from "./types";
-import { Icons } from "../../atoms/Icons";
+import { Icons } from "@/components/atoms/Icons";
 
 export function ConfirmationDialog({
   isOpen,
@@ -105,10 +105,10 @@ export function ConfirmationDialog({
         <div className="p-6">
           <div className="flex items-start space-x-4">
             {/* Icon */}
-            <div className={`flex-shrink-0 w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center`}>
-              <div className={styles.icon}>
-                {getIcon()}
-              </div>
+            <div
+              className={`flex-shrink-0 w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center`}
+            >
+              <div className={styles.icon}>{getIcon()}</div>
             </div>
 
             {/* Text Content */}
@@ -116,20 +116,14 @@ export function ConfirmationDialog({
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 {title}
               </h3>
-              <p className="text-sm text-gray-600">
-                {message}
-              </p>
+              <p className="text-sm text-gray-600">{message}</p>
             </div>
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isLoading}
-          >
+          <Button variant="outline" onClick={onClose} disabled={isLoading}>
             {cancelLabel}
           </Button>
           <Button
@@ -146,4 +140,4 @@ export function ConfirmationDialog({
       </div>
     </div>
   );
-} 
+}

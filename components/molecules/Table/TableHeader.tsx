@@ -1,4 +1,4 @@
-import { Button } from "../../ui/Button";
+import { Button } from "@/components/ui/button";
 import { PageHeaderAction } from "./types";
 
 interface TableHeaderProps {
@@ -7,7 +7,11 @@ interface TableHeaderProps {
   actions?: PageHeaderAction[];
 }
 
-export function TableHeader({ title, description, actions = [] }: TableHeaderProps) {
+export function TableHeader({
+  title,
+  description,
+  actions = [],
+}: TableHeaderProps) {
   if (!title && !description && actions.length === 0) {
     return null;
   }
@@ -16,7 +20,9 @@ export function TableHeader({ title, description, actions = [] }: TableHeaderPro
     <div className="mb-8">
       <div className="flex justify-between items-center">
         <div>
-          {title && <h1 className="text-3xl font-bold text-gray-900">{title}</h1>}
+          {title && (
+            <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
+          )}
           {description && (
             <p className="mt-1 text-sm text-gray-600">{description}</p>
           )}
@@ -37,4 +43,4 @@ export function TableHeader({ title, description, actions = [] }: TableHeaderPro
       </div>
     </div>
   );
-} 
+}

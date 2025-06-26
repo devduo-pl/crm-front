@@ -1,5 +1,5 @@
-import { Button } from "../ui/Button";
-import { Spinner } from "../ui/spinner";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { ComponentProps } from "react";
 
 interface LoadingButtonProps extends ComponentProps<typeof Button> {
@@ -7,12 +7,12 @@ interface LoadingButtonProps extends ComponentProps<typeof Button> {
   loadingText?: string;
 }
 
-export function LoadingButton({ 
-  isLoading = false, 
-  loadingText = "Loading...", 
-  children, 
+export function LoadingButton({
+  isLoading = false,
+  loadingText = "Loading...",
+  children,
   disabled,
-  ...props 
+  ...props
 }: LoadingButtonProps) {
   return (
     <Button disabled={disabled || isLoading} {...props}>
@@ -26,4 +26,4 @@ export function LoadingButton({
       )}
     </Button>
   );
-} 
+}

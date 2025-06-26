@@ -1,4 +1,4 @@
-import { Button } from "../../ui/Button";
+import { Button } from "@/components/ui/button";
 import { PaginationInfo } from "./types";
 
 interface TablePaginationProps {
@@ -7,10 +7,10 @@ interface TablePaginationProps {
   minItemsForPagination?: number;
 }
 
-export function TablePagination({ 
-  pagination, 
-  onPageChange, 
-  minItemsForPagination = 10 
+export function TablePagination({
+  pagination,
+  onPageChange,
+  minItemsForPagination = 10,
 }: TablePaginationProps) {
   const hasEnoughItems = pagination.total >= minItemsForPagination;
   const canGoPrevious = pagination.page > 1;
@@ -19,13 +19,11 @@ export function TablePagination({
   return (
     <div className="flex items-center justify-between mt-6">
       <div className="text-sm text-gray-700">
-        {pagination.total === 0 ? (
-          "No items to display"
-        ) : pagination.totalPages <= 1 ? (
-          `Showing all ${pagination.total} items`
-        ) : (
-          `Showing page ${pagination.page} of ${pagination.totalPages} (${pagination.total} total items)`
-        )}
+        {pagination.total === 0
+          ? "No items to display"
+          : pagination.totalPages <= 1
+          ? `Showing all ${pagination.total} items`
+          : `Showing page ${pagination.page} of ${pagination.totalPages} (${pagination.total} total items)`}
       </div>
       <div className="flex space-x-2">
         <Button
@@ -47,4 +45,4 @@ export function TablePagination({
       </div>
     </div>
   );
-} 
+}

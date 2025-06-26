@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/store";
 import { useAuthRefresh } from "@/hooks/useAuthRefresh";
@@ -9,7 +15,9 @@ import { useEffect } from "react";
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuthStore();
-  
+
+  console.log(user);
+
   // This hook will automatically handle token refresh
   useAuthRefresh();
 
@@ -119,22 +127,30 @@ export default function DashboardPage() {
             {user ? (
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium text-gray-500">User ID</label>
+                  <label className="text-sm font-medium text-gray-500">
+                    User ID
+                  </label>
                   <p className="text-sm text-gray-900 font-mono">{user.id}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500">Email</label>
+                  <label className="text-sm font-medium text-gray-500">
+                    Email
+                  </label>
                   <p className="text-sm text-gray-900">{user.email}</p>
                 </div>
                 {user.firstName && (
                   <div>
-                    <label className="text-sm font-medium text-gray-500">First Name</label>
+                    <label className="text-sm font-medium text-gray-500">
+                      First Name
+                    </label>
                     <p className="text-sm text-gray-900">{user.firstName}</p>
                   </div>
                 )}
                 {user.lastName && (
                   <div>
-                    <label className="text-sm font-medium text-gray-500">Last Name</label>
+                    <label className="text-sm font-medium text-gray-500">
+                      Last Name
+                    </label>
                     <p className="text-sm text-gray-900">{user.lastName}</p>
                   </div>
                 )}
@@ -157,9 +173,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">Active</div>
-            <p className="text-xs text-gray-500">
-              Successfully authenticated
-            </p>
+            <p className="text-xs text-gray-500">Successfully authenticated</p>
           </CardContent>
         </Card>
 
@@ -172,24 +186,20 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">Valid</div>
-            <p className="text-xs text-gray-500">
-              Token is active
-            </p>
+            <p className="text-xs text-gray-500">Token is active</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Account Type
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Account Type</CardTitle>
             <Icons.User className="w-4 h-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">User</div>
-            <p className="text-xs text-gray-500">
-              Standard access
-            </p>
+            <div className="text-2xl font-bold text-purple-600">
+              {user?.roles.includes("admin") ? "Admin" : "User"}
+            </div>
+            <p className="text-xs text-gray-500">Standard access</p>
           </CardContent>
         </Card>
       </div>

@@ -1,32 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { DataTable, TableColumn, TableAction, PageHeaderAction } from "../molecules/Table";
+import {
+  DataTable,
+  TableColumn,
+  TableAction,
+  PageHeaderAction,
+} from "../molecules/Table";
 import { Popup, PopupAction } from "../molecules/Popup";
 import { ConfirmationDialog } from "../molecules/ConfirmationDialog";
 import { RoleForm, RoleFormData } from "../organisms/RoleForm";
-import { useRoles, useCreateRole, useUpdateRole, useDeleteRole } from "@/hooks/useRoles";
+import {
+  useRoles,
+  useCreateRole,
+  useUpdateRole,
+  useDeleteRole,
+} from "@/hooks/useRoles";
 import { useNotification } from "@/hooks/useNotification";
 import type { Role } from "@/services/roles";
 
 export function RolesPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<Role | null>(null);
+  const [editingRole, setEditingRole] = useState<Role | undefined>(undefined);
   const [confirmationDialog, setConfirmationDialog] = useState<{
     isOpen: boolean;
-    role: Role | null;
+    role: Role | undefined;
   }>({
     isOpen: false,
-    role: null,
+    role: undefined,
   });
-  
-  const { 
-    data: roles = [], 
-    isLoading, 
-    error, 
-    refetch 
-  } = useRoles();
-  
+
+  const { data: roles = [], isLoading, error, refetch } = useRoles();
+
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
   const deleteRoleMutation = useDeleteRole();
@@ -34,68 +39,68 @@ export function RolesPage() {
 
   const columns: TableColumn<Role>[] = [
     {
-      key: 'name',
-      header: 'Role Name',
-      className: 'font-medium'
+      key: "name",
+      header: "Role Name",
+      className: "font-medium",
     },
     {
-      key: 'description',
-      header: 'Description',
+      key: "description",
+      header: "Description",
       render: (value) => (
         <span className="text-gray-600 max-w-md truncate block">
           {value as string}
         </span>
-      )
+      ),
     },
     {
-      key: 'createdAt',
-      header: 'Created',
-      render: (value) => new Date(value as string).toLocaleDateString()
+      key: "createdAt",
+      header: "Created",
+      render: (value) => new Date(value as string).toLocaleDateString(),
     },
     {
-      key: 'updatedAt',
-      header: 'Last Updated',
-      render: (value) => new Date(value as string).toLocaleDateString()
-    }
+      key: "updatedAt",
+      header: "Last Updated",
+      render: (value) => new Date(value as string).toLocaleDateString(),
+    },
   ];
 
   const actions: TableAction<Role>[] = [
     {
-      label: 'Edit',
+      label: "Edit",
       onClick: handleEdit,
-      variant: 'outline'
+      variant: "outline",
     },
     {
-      label: 'Delete',
+      label: "Delete",
       onClick: (role) => handleDeleteConfirmation(role),
-      variant: 'destructive'
-    }
+      variant: "destructive",
+    },
   ];
 
   const headerActions: PageHeaderAction[] = [
     {
-      label: 'Add Role',
+      label: "Add Role",
       onClick: handleAddRole,
-      variant: 'default'
-    }
+      variant: "default",
+    },
   ];
 
   const popupActions: PopupAction[] = [
     {
-      label: 'Cancel',
+      label: "Cancel",
       onClick: handleClosePopup,
-      variant: 'outline'
+      variant: "outline",
     },
     {
-      label: editingRole ? 'Update Role' : 'Create Role',
+      label: editingRole ? "Update Role" : "Create Role",
       onClick: handleSaveRole,
-      variant: 'default',
-      loading: createRoleMutation.isPending || updateRoleMutation.isPending
-    }
+      variant: "default",
+      loading: createRoleMutation.isPending || updateRoleMutation.isPending,
+    },
   ];
 
   function handleAddRole() {
-    setEditingRole(null);
+    setEditingRole(undefined);
     setIsPopupOpen(true);
   }
 
@@ -106,11 +111,11 @@ export function RolesPage() {
 
   function handleClosePopup() {
     setIsPopupOpen(false);
-    setEditingRole(null);
+    setEditingRole(undefined);
   }
 
   function handleSaveRole() {
-    const form = document.querySelector('form');
+    const form = document.querySelector("form");
     if (form) {
       form.requestSubmit();
     }
@@ -124,10 +129,10 @@ export function RolesPage() {
           data: {
             name: formData.name,
             description: formData.description,
-          }
+          },
         });
         showSuccess(
-          'Role Updated Successfully',
+          "Role Updated Successfully",
           `${formData.name} has been updated.`
         );
       } else {
@@ -136,17 +141,19 @@ export function RolesPage() {
           description: formData.description,
         });
         showSuccess(
-          'Role Created Successfully',
+          "Role Created Successfully",
           `${formData.name} has been added to the system.`
         );
       }
-      
+
       handleClosePopup();
     } catch (err) {
-      console.error('Error saving role:', err);
+      console.error("Error saving role:", err);
       showError(
-        editingRole ? 'Failed to Update Role' : 'Failed to Create Role',
-        err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.'
+        editingRole ? "Failed to Update Role" : "Failed to Create Role",
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
       );
     }
   }
@@ -161,7 +168,7 @@ export function RolesPage() {
   function handleCloseConfirmation() {
     setConfirmationDialog({
       isOpen: false,
-      role: null,
+      role: undefined,
     });
   }
 
@@ -173,27 +180,29 @@ export function RolesPage() {
     try {
       await deleteRoleMutation.mutateAsync(confirmationDialog.role.id);
       showSuccess(
-        'Role Deleted Successfully',
+        "Role Deleted Successfully",
         `${roleName} has been removed from the system.`
       );
-      
+
       handleCloseConfirmation();
     } catch (err) {
-      console.error('Error deleting role:', err);
+      console.error("Error deleting role:", err);
       showError(
-        'Failed to Delete Role',
-        err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.'
+        "Failed to Delete Role",
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
       );
     }
   }
 
   const getConfirmationContent = () => {
-    if (!confirmationDialog.role) return { title: '', message: '' };
+    if (!confirmationDialog.role) return { title: "", message: "" };
 
     const roleName = confirmationDialog.role.name;
-    
+
     return {
-      title: 'Delete Role',
+      title: "Delete Role",
       message: `Are you sure you want to delete the "${roleName}" role? This action cannot be undone and may affect users assigned to this role.`,
     };
   };
@@ -220,14 +229,16 @@ export function RolesPage() {
       <Popup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
-        title={editingRole ? 'Edit Role' : 'Add New Role'}
+        title={editingRole ? "Edit Role" : "Add New Role"}
         actions={popupActions}
         size="md"
       >
         <RoleForm
           role={editingRole}
           onSubmit={handleFormSubmit}
-          isLoading={createRoleMutation.isPending || updateRoleMutation.isPending}
+          isLoading={
+            createRoleMutation.isPending || updateRoleMutation.isPending
+          }
         />
       </Popup>
 
@@ -244,4 +255,4 @@ export function RolesPage() {
       />
     </>
   );
-} 
+}

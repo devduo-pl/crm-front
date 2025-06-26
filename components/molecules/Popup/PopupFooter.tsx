@@ -1,6 +1,6 @@
-import { Button } from "../../ui/Button";
+import { Button } from "@/components/ui/button";
 import { PopupAction } from "./types";
-import { Icons } from "../../atoms/Icons";
+import { Icons } from "@/components/atoms/Icons";
 
 interface PopupFooterProps {
   actions: PopupAction[];
@@ -28,4 +28,4 @@ export function PopupFooter({ actions }: PopupFooterProps) {
       ))}
     </div>
   );
-} 
+}
