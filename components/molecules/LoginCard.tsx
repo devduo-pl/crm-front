@@ -83,7 +83,9 @@ export function LoginCard() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or TODO</span>
+              <span className="px-2 bg-white text-gray-500 rounded-full">
+                Or
+              </span>
             </div>
           </div>
 

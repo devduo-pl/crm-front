@@ -2,9 +2,9 @@
 
 import { useAuthStore } from "@/store";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 
-export default function VerifyAccountPage() {
+function VerifyAccountContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -25,5 +25,13 @@ export default function VerifyAccountPage() {
     <div>
       <h1>Account verified successfully</h1>
     </div>
+  );
+}
+
+export default function VerifyAccountPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyAccountContent />
+    </Suspense>
   );
 }
