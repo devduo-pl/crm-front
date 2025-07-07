@@ -35,6 +35,8 @@ interface AuthState {
   refreshToken: () => Promise<boolean>;
   checkAuth: () => Promise<void>;
   verifyAccount: (token: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, password: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -97,6 +99,28 @@ export const useAuthStore = create<AuthState>()(
           } catch {
             set({ isLoading: false });
             throw new Error("Account verification failed");
+          }
+        },
+
+        forgotPassword: async (email: string) => {
+          set({ isLoading: true });
+          try {
+            await authService.requestPasswordRecovery(email);
+            set({ isLoading: false });
+          } catch (error) {
+            set({ isLoading: false });
+            throw error;
+          }
+        },
+
+        resetPassword: async (token: string, password: string) => {
+          set({ isLoading: true });
+          try {
+            await authService.resetPassword(token, password);
+            set({ isLoading: false });
+          } catch (error) {
+            set({ isLoading: false });
+            throw error;
           }
         },
       }),

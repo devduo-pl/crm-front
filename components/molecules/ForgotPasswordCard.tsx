@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
+import { useAlert } from "@/contexts/AlertContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,11 +11,11 @@ import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
 
-export function LoginCard() {
+export function ForgotPasswordCard() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isLoading } = useAuthStore();
+  const { forgotPassword, isLoading } = useAuthStore();
+  const { addAlert } = useAlert();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,13 +23,20 @@ export function LoginCard() {
     setError("");
 
     try {
-      await login(email, password);
-      router.push("/dashboard");
+      await forgotPassword(email);
+      addAlert({
+        type: "success",
+        title: "Email sent successfully",
+        message: "Please check your email for password reset instructions.",
+      });
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Login failed. Please try again.");
+        setError("Failed to send reset email. Please try again.");
       }
     }
   };
@@ -36,7 +44,7 @@ export function LoginCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle>Reset Password</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -49,18 +57,7 @@ export function LoginCard() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-
-            <FormField
-              id="password"
-              label="Password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter your email address"
             />
           </div>
 
@@ -69,11 +66,11 @@ export function LoginCard() {
           <LoadingButton
             type="submit"
             isLoading={isLoading}
-            loadingText="Signing in..."
+            loadingText="Sending email..."
             className="w-full"
             size="lg"
           >
-            Sign in
+            Send Reset Email
           </LoadingButton>
         </form>
 
@@ -91,11 +88,11 @@ export function LoginCard() {
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/forgot-password">Forgot your password?</Link>
+              <Link href="/login">Back to Sign In</Link>
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-}
+} 

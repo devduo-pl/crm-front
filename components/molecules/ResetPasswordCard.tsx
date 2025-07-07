@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
+import { useAlert } from "@/contexts/AlertContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,25 +11,47 @@ import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
 
-export function LoginCard() {
-  const [email, setEmail] = useState("");
+interface ResetPasswordCardProps {
+  token: string;
+}
+
+export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isLoading } = useAuthStore();
+  const { resetPassword, isLoading } = useAuthStore();
+  const { addAlert } = useAlert();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
     try {
-      await login(email, password);
-      router.push("/dashboard");
+      await resetPassword(token, password);
+      addAlert({
+        type: "success",
+        title: "Password reset successfully",
+        message: "Your password has been reset. You can now sign in with your new password.",
+      });
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Login failed. Please try again.");
+        setError("Failed to reset password. Please try again or request a new reset link.");
       }
     }
   };
@@ -36,31 +59,31 @@ export function LoginCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle>Reset Your Password</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <FormField
-              id="email"
-              label="Email address"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-
-            <FormField
               id="password"
-              label="Password"
+              label="New Password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter your new password"
+            />
+
+            <FormField
+              id="confirmPassword"
+              label="Confirm New Password"
+              type="password"
+              autoComplete="new-password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your new password"
             />
           </div>
 
@@ -69,11 +92,11 @@ export function LoginCard() {
           <LoadingButton
             type="submit"
             isLoading={isLoading}
-            loadingText="Signing in..."
+            loadingText="Resetting password..."
             className="w-full"
             size="lg"
           >
-            Sign in
+            Reset Password
           </LoadingButton>
         </form>
 
@@ -91,7 +114,7 @@ export function LoginCard() {
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/forgot-password">Forgot your password?</Link>
+              <Link href="/login">Back to Sign In</Link>
             </Button>
           </div>
         </div>

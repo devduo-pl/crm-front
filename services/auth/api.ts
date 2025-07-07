@@ -87,7 +87,7 @@ export const authService = {
    * Request password recovery
    */
   requestPasswordRecovery: async (email: string): Promise<void> => {
-    await fetchApi("/auth/password-recovery", {
+    await fetchApi("/auth/forgot-password", {
       method: "POST",
       body: JSON.stringify({ email } as PasswordRecoveryRequest),
     });
