@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FormField } from "@/components/atoms/FormField";
+import { useFormsTranslations } from "@/hooks/useTranslations";
 import type { User } from "@/types/user";
 
 export interface UserFormData {
@@ -23,8 +24,11 @@ const createFormData = (user?: User): UserFormData => ({
 });
 
 export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
-  const [formData, setFormData] = useState<UserFormData>(() => createFormData(user));
+  const [formData, setFormData] = useState<UserFormData>(() =>
+    createFormData(user)
+  );
   const [errors, setErrors] = useState<Partial<UserFormData>>({});
+  const t = useFormsTranslations();
 
   useEffect(() => {
     setFormData(createFormData(user));
@@ -34,17 +38,17 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
     const newErrors: Partial<UserFormData> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName = t("user.firstNameRequired");
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName = t("user.lastNameRequired");
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("user.emailRequired");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t("user.validEmailRequired");
     }
 
     setErrors(newErrors);
@@ -72,34 +76,34 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <FormField
         id="firstName"
-        label="First Name *"
+        label={`${t("user.firstName")} *`}
         type="text"
         value={formData.firstName}
         onChange={(e) => handleInputChange("firstName", e.target.value)}
         disabled={isLoading}
-        placeholder="Enter first name"
+        placeholder={t("user.enterFirstName")}
         error={errors.firstName}
       />
 
       <FormField
         id="lastName"
-        label="Last Name *"
+        label={`${t("user.lastName")} *`}
         type="text"
         value={formData.lastName}
         onChange={(e) => handleInputChange("lastName", e.target.value)}
         disabled={isLoading}
-        placeholder="Enter last name"
+        placeholder={t("user.enterLastName")}
         error={errors.lastName}
       />
 
       <FormField
         id="email"
-        label="Email *"
+        label={`${t("user.email")} *`}
         type="email"
         value={formData.email}
         onChange={(e) => handleInputChange("email", e.target.value)}
         disabled={isLoading}
-        placeholder="Enter email address"
+        placeholder={t("user.enterEmailAddress")}
         error={errors.email}
       />
 

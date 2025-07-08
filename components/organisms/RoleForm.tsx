@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FormField } from "@/components/atoms/FormField";
+import { useFormsTranslations } from "@/hooks/useTranslations";
 import type { Role } from "@/services/roles";
 
 export interface RoleFormData {
@@ -21,8 +22,11 @@ const createFormData = (role?: Role): RoleFormData => ({
 });
 
 export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
-  const [formData, setFormData] = useState<RoleFormData>(() => createFormData(role));
+  const [formData, setFormData] = useState<RoleFormData>(() =>
+    createFormData(role)
+  );
   const [errors, setErrors] = useState<Partial<RoleFormData>>({});
+  const t = useFormsTranslations();
 
   useEffect(() => {
     setFormData(createFormData(role));
@@ -32,15 +36,15 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
     const newErrors: Partial<RoleFormData> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Role name is required";
+      newErrors.name = t("role.roleNameRequired");
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Role name must be at least 2 characters";
+      newErrors.name = t("role.roleNameMinLength");
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
+      newErrors.description = t("role.descriptionRequired");
     } else if (formData.description.trim().length < 5) {
-      newErrors.description = "Description must be at least 5 characters";
+      newErrors.description = t("role.descriptionMinLength");
     }
 
     setErrors(newErrors);
@@ -68,12 +72,12 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <FormField
         id="name"
-        label="Role Name *"
+        label={`${t("role.roleName")} *`}
         type="text"
         value={formData.name}
         onChange={(e) => handleInputChange("name", e.target.value)}
         disabled={isLoading}
-        placeholder="Enter role name (e.g., Admin, Manager, User)"
+        placeholder={t("role.enterRoleName")}
         error={errors.name}
       />
 
@@ -82,7 +86,7 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
           htmlFor="description"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Description *
+          {t("role.description")} *
         </label>
         <textarea
           id="description"
@@ -93,9 +97,13 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
             w-full px-3 py-2 border rounded-md shadow-sm text-sm
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-            ${errors.description ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-gray-300"}
+            ${
+              errors.description
+                ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300"
+            }
           `}
-          placeholder="Describe the role's responsibilities and permissions"
+          placeholder={t("role.enterDescription")}
           rows={3}
         />
         {errors.description && (

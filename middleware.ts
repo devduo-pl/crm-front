@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isTokenExpired } from "./lib/auth";
+import createIntlMiddleware from "next-intl/middleware";
+import { locales, defaultLocale } from "./i18n";
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -29,6 +31,13 @@ function isPublicRoute(pathname: string): boolean {
   });
 }
 
+// Create the intl middleware
+const intlMiddleware = createIntlMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: "as-needed",
+});
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -36,6 +45,13 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith("/_next") || pathname.startsWith("/api")) {
     return NextResponse.next();
   }
+
+  // Handle i18n routing first
+  const intlResponse = intlMiddleware(request);
+
+  // Extract locale from pathname for auth checks
+  const pathnameWithoutLocale =
+    pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/";
 
   // Get tokens from cookies
   const accessToken = request.cookies.get("access_token")?.value;
@@ -55,23 +71,45 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = accessToken && !tokenExpired;
 
   // If user is authenticated and on home page or auth-related routes, redirect to dashboard
-  if (isAuthenticated && (pathname === "/" || pathname === "/login" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (
+    isAuthenticated &&
+    (pathnameWithoutLocale === "/" ||
+      pathnameWithoutLocale === "/login" ||
+      pathnameWithoutLocale === "/signup")
+  ) {
+    const url = new URL("/dashboard", request.url);
+    // Preserve the locale in the redirect
+    const locale = pathname.match(/^\/([a-z]{2})\//)?.[1];
+    if (locale && locale !== defaultLocale) {
+      url.pathname = `/${locale}/dashboard`;
+    }
+    return NextResponse.redirect(url);
   }
 
   // If user is not authenticated and trying to access protected route, redirect to login
-  if (!isAuthenticated && isProtectedRoute(pathname)) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!isAuthenticated && isProtectedRoute(pathnameWithoutLocale)) {
+    const url = new URL("/login", request.url);
+    // Preserve the locale in the redirect
+    const locale = pathname.match(/^\/([a-z]{2})\//)?.[1];
+    if (locale && locale !== defaultLocale) {
+      url.pathname = `/${locale}/login`;
+    }
+    return NextResponse.redirect(url);
   }
 
   // If token is expired but we have a refresh token, add a header to trigger refresh
-  if (accessToken && tokenExpired && refreshToken && !isPublicRoute(pathname)) {
-    const response = NextResponse.next();
+  if (
+    accessToken &&
+    tokenExpired &&
+    refreshToken &&
+    !isPublicRoute(pathnameWithoutLocale)
+  ) {
+    const response = intlResponse || NextResponse.next();
     response.headers.set("x-token-expired", "true");
     return response;
   }
 
-  return NextResponse.next();
+  return intlResponse;
 }
 
 export const config = {

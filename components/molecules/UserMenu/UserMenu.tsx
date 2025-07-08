@@ -6,27 +6,29 @@ import { useAuthStore } from "@/store";
 import { useNotification } from "@/hooks/useNotification";
 import { Icons } from "@/components/atoms/Icons";
 import { Button } from "@/components/ui/button";
+import { useNavigationTranslations } from "@/hooks/useTranslations";
 
 export function UserMenu() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const { showSuccess, showError } = useNotification();
+  const t = useNavigationTranslations();
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
 
     try {
       await logout();
-      showSuccess("Signed Out", "You have been successfully signed out.");
+      showSuccess(t("signedOut"), t("signOutSuccess"));
 
       // Immediate redirect
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
       showError(
-        "Sign Out Failed",
-        "There was an issue signing you out. Please try again."
+        t("signOutFailed"),
+        t("signOutError")
       );
     } finally {
       setIsLoggingOut(false);
@@ -73,7 +75,7 @@ export function UserMenu() {
           <Icons.Logout className="w-4 h-4" />
         )}
         <span className="hidden sm:inline">
-          {isLoggingOut ? "Signing out..." : "Sign Out"}
+          {isLoggingOut ? t("signingOut") : t("signOut")}
         </span>
       </Button>
     </div>

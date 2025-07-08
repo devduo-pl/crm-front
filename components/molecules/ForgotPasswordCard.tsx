@@ -10,6 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
+import {
+  useAuthTranslations,
+  useCommonTranslations,
+} from "@/hooks/useTranslations";
 
 export function ForgotPasswordCard() {
   const [email, setEmail] = useState("");
@@ -17,6 +21,8 @@ export function ForgotPasswordCard() {
   const { forgotPassword, isLoading } = useAuthStore();
   const { addAlert } = useAlert();
   const router = useRouter();
+  const tAuth = useAuthTranslations();
+  const tCommon = useCommonTranslations();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +32,8 @@ export function ForgotPasswordCard() {
       await forgotPassword(email);
       addAlert({
         type: "success",
-        title: "Email sent successfully",
-        message: "Please check your email for password reset instructions.",
+        title: tAuth("emailSentSuccessfully"),
+        message: tAuth("checkEmailForInstructions"),
       });
       setTimeout(() => {
         router.push("/login");
@@ -36,7 +42,7 @@ export function ForgotPasswordCard() {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Failed to send reset email. Please try again.");
+        setError(tAuth("failedToSendResetEmail"));
       }
     }
   };
@@ -44,20 +50,20 @@ export function ForgotPasswordCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reset Password</CardTitle>
+        <CardTitle>{tAuth('resetPassword')}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <FormField
               id="email"
-              label="Email address"
+              label={tAuth('emailAddress')}
               type="email"
               autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
+              placeholder={tAuth('enterEmailAddress')}
             />
           </div>
 
@@ -66,11 +72,11 @@ export function ForgotPasswordCard() {
           <LoadingButton
             type="submit"
             isLoading={isLoading}
-            loadingText="Sending email..."
+            loadingText={tAuth('sendingEmail')}
             className="w-full"
             size="lg"
           >
-            Send Reset Email
+            {tAuth('sendResetEmail')}
           </LoadingButton>
         </form>
 
@@ -81,18 +87,18 @@ export function ForgotPasswordCard() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500 rounded-full">
-                Or
+                {tCommon('or')}
               </span>
             </div>
           </div>
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/login">Back to Sign In</Link>
+              <Link href="/login">{tAuth('backToSignIn')}</Link>
             </Button>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-} 
+}

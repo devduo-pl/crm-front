@@ -7,6 +7,7 @@ import { LoadingButton } from "@/components/atoms/LoadingButton";
 
 import { useBirSearch } from "@/hooks/useCompanies";
 import { useAlert } from "@/contexts/AlertContext";
+import { useFormsTranslations } from "@/hooks/useTranslations";
 import type { CompanyFormData, Company } from "@/types/company";
 
 export interface CompanyFormProps {
@@ -37,19 +38,24 @@ const createFormData = (initialData?: Partial<Company>): CompanyFormData => ({
   buildingNumber: initialData?.buildingNumber || "",
   apartmentNumber: initialData?.apartmentNumber || "",
   fullAddress: initialData?.fullAddress || "",
-  annualRevenue: typeof initialData?.annualRevenue === 'string' 
-    ? parseFloat(initialData.annualRevenue) || 0 
-    : initialData?.annualRevenue || 0,
-  employeeCount: typeof initialData?.employeeCount === 'string' 
-    ? parseInt(initialData.employeeCount) || 0 
-    : initialData?.employeeCount || 0,
+  annualRevenue:
+    typeof initialData?.annualRevenue === "string"
+      ? parseFloat(initialData.annualRevenue) || 0
+      : initialData?.annualRevenue || 0,
+  employeeCount:
+    typeof initialData?.employeeCount === "string"
+      ? parseInt(initialData.employeeCount) || 0
+      : initialData?.employeeCount || 0,
   tags: initialData?.tags ? (initialData.tags as string[]) : [],
 });
 
 export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
-  const [formData, setFormData] = useState<CompanyFormData>(() => createFormData(initialData));
+  const [formData, setFormData] = useState<CompanyFormData>(() =>
+    createFormData(initialData)
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const t = useFormsTranslations();
   const birSearchMutation = useBirSearch();
   const { addAlert } = useAlert();
 
@@ -57,20 +63,25 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
     setFormData(createFormData(initialData));
   }, [initialData]);
 
-  const handleInputChange = (field: keyof CompanyFormData, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof CompanyFormData,
+    value: string | number
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: "" }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  const handleBirSearch = async (searchType: 'nip' | 'regon' | 'krs') => {
+  const handleBirSearch = async (searchType: "nip" | "regon" | "krs") => {
     const searchValue = formData[searchType];
     if (!searchValue) {
       addAlert({
         type: "error",
-        title: "Search Error",
-        message: `Please enter a ${searchType.toUpperCase()} number first.`,
+        title: t("company.searchError"),
+        message: t("company.enterNumberFirst", {
+          type: searchType.toUpperCase(),
+        }),
       });
       return;
     }
@@ -86,57 +97,63 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
           ...formData, // Keep current form data as base
           ...response.data, // Override with BIR data where available
         };
-        
+
         // Use createFormData to ensure proper type conversion
         setFormData(createFormData(mergedData));
 
         addAlert({
           type: "success",
-          title: "Data Retrieved",
-          message: "Company data has been successfully retrieved from BIR registry.",
+          title: t("company.dataRetrieved"),
+          message: t("company.dataRetrievedSuccess"),
         });
       } else {
         addAlert({
           type: "error",
-          title: "Company Not Found",
-          message: response.error || "No company found with the provided identifier.",
+          title: t("company.companyNotFound"),
+          message: response.error || t("company.noCompanyFound"),
         });
       }
     } catch {
       addAlert({
         type: "error",
-        title: "Search Failed",
-        message: "Failed to search company data. Please try again.",
+        title: t("company.searchFailed"),
+        message: t("company.searchFailedMessage"),
       });
     }
   };
 
   const handleTagsChange = (value: string) => {
-    const tags = value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-    setFormData(prev => ({ ...prev, tags }));
+    const tags = value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+    setFormData((prev) => ({ ...prev, tags }));
   };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Company name is required";
+      newErrors.name = t("company.companyNameRequired");
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t("company.validEmailRequired");
     }
 
-    if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/\s/g, ""))) {
-      newErrors.phone = "Please enter a valid phone number";
+    if (
+      formData.phone &&
+      !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/\s/g, ""))
+    ) {
+      newErrors.phone = t("company.validPhoneRequired");
     }
 
     if (isNaN(formData.annualRevenue) || formData.annualRevenue < 0) {
-      newErrors.annualRevenue = "Annual revenue must be a valid positive number";
+      newErrors.annualRevenue = t("company.validRevenueRequired");
     }
 
     if (isNaN(formData.employeeCount) || formData.employeeCount < 0) {
-      newErrors.employeeCount = "Employee count must be a valid positive number";
+      newErrors.employeeCount = t("company.validEmployeeCountRequired");
     }
 
     setErrors(newErrors);
@@ -154,16 +171,18 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
-        
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("company.basicInformation")}
+        </h3>
+
         <FormField
           id="name"
-          label="Company Name"
+          label={t("company.companyName")}
           type="text"
           required
           value={formData.name}
           onChange={(e) => handleInputChange("name", e.target.value)}
-          placeholder="Enter company name"
+          placeholder={t("company.enterCompanyName")}
           error={errors.name}
         />
 
@@ -171,7 +190,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
           <div className="flex gap-2">
             <FormField
               id="nip"
-              label="NIP"
+              label={t("company.nip")}
               type="text"
               value={formData.nip}
               onChange={(e) => handleInputChange("nip", e.target.value)}
@@ -183,18 +202,18 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
               variant="outline"
               size="sm"
               className="mt-6"
-              onClick={() => handleBirSearch('nip')}
+              onClick={() => handleBirSearch("nip")}
               isLoading={birSearchMutation.isPending}
-              loadingText="Searching..."
+              loadingText={t("company.searching")}
             >
-              Search
+              {t("company.search")}
             </LoadingButton>
           </div>
 
           <div className="flex gap-2">
             <FormField
               id="regon"
-              label="REGON"
+              label={t("company.regon")}
               type="text"
               value={formData.regon}
               onChange={(e) => handleInputChange("regon", e.target.value)}
@@ -206,18 +225,18 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
               variant="outline"
               size="sm"
               className="mt-6"
-              onClick={() => handleBirSearch('regon')}
+              onClick={() => handleBirSearch("regon")}
               isLoading={birSearchMutation.isPending}
-              loadingText="Searching..."
+              loadingText={t("company.searching")}
             >
-              Search
+              {t("company.search")}
             </LoadingButton>
           </div>
 
           <div className="flex gap-2">
             <FormField
               id="krs"
-              label="KRS"
+              label={t("company.krs")}
               type="text"
               value={formData.krs}
               onChange={(e) => handleInputChange("krs", e.target.value)}
@@ -229,11 +248,11 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
               variant="outline"
               size="sm"
               className="mt-6"
-              onClick={() => handleBirSearch('krs')}
+              onClick={() => handleBirSearch("krs")}
               isLoading={birSearchMutation.isPending}
-              loadingText="Searching..."
+              loadingText={t("company.searching")}
             >
-              Search
+              {t("company.search")}
             </LoadingButton>
           </div>
         </div>
@@ -241,7 +260,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             id="legalForm"
-            label="Legal Form"
+            label={t("company.legalForm")}
             type="text"
             value={formData.legalForm}
             onChange={(e) => handleInputChange("legalForm", e.target.value)}
@@ -250,8 +269,11 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
           />
 
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+            <label
+              htmlFor="status"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              {t("company.status")}
             </label>
             <select
               id="status"
@@ -259,8 +281,8 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
               onChange={(e) => handleInputChange("status", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="active">{t("company.active")}</option>
+              <option value="inactive">{t("company.inactive")}</option>
             </select>
           </div>
         </div>
@@ -268,7 +290,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             id="industry"
-            label="Industry"
+            label={t("company.industry")}
             type="text"
             value={formData.industry}
             onChange={(e) => handleInputChange("industry", e.target.value)}
@@ -278,7 +300,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="size"
-            label="Company Size"
+            label={t("company.companySize")}
             type="text"
             value={formData.size}
             onChange={(e) => handleInputChange("size", e.target.value)}
@@ -289,7 +311,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
         <FormField
           id="description"
-          label="Description"
+          label={t("company.description")}
           type="textarea"
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
@@ -300,12 +322,14 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
       {/* Contact Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Contact Information</h3>
-        
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("company.contactInformation")}
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             id="phone"
-            label="Phone"
+            label={t("company.phone")}
             type="tel"
             value={formData.phone}
             onChange={(e) => handleInputChange("phone", e.target.value)}
@@ -315,7 +339,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="email"
-            label="Email"
+            label={t("company.email")}
             type="email"
             value={formData.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
@@ -327,12 +351,14 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
       {/* Address Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Address Information</h3>
-        
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("company.addressInformation")}
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             id="province"
-            label="Province"
+            label={t("company.province")}
             type="text"
             value={formData.province}
             onChange={(e) => handleInputChange("province", e.target.value)}
@@ -342,7 +368,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="county"
-            label="County"
+            label={t("company.county")}
             type="text"
             value={formData.county}
             onChange={(e) => handleInputChange("county", e.target.value)}
@@ -352,7 +378,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="municipality"
-            label="Municipality"
+            label={t("company.municipality")}
             type="text"
             value={formData.municipality}
             onChange={(e) => handleInputChange("municipality", e.target.value)}
@@ -364,7 +390,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             id="city"
-            label="City"
+            label={t("company.city")}
             type="text"
             value={formData.city}
             onChange={(e) => handleInputChange("city", e.target.value)}
@@ -374,7 +400,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="postalCode"
-            label="Postal Code"
+            label={t("company.postalCode")}
             type="text"
             value={formData.postalCode}
             onChange={(e) => handleInputChange("postalCode", e.target.value)}
@@ -386,7 +412,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             id="street"
-            label="Street"
+            label={t("company.street")}
             type="text"
             value={formData.street}
             onChange={(e) => handleInputChange("street", e.target.value)}
@@ -396,20 +422,24 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="buildingNumber"
-            label="Building Number"
+            label={t("company.buildingNumber")}
             type="text"
             value={formData.buildingNumber}
-            onChange={(e) => handleInputChange("buildingNumber", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("buildingNumber", e.target.value)
+            }
             placeholder="123"
             error={errors.buildingNumber}
           />
 
           <FormField
             id="apartmentNumber"
-            label="Apartment Number"
+            label={t("company.apartmentNumber")}
             type="text"
             value={formData.apartmentNumber}
-            onChange={(e) => handleInputChange("apartmentNumber", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("apartmentNumber", e.target.value)
+            }
             placeholder="45"
             error={errors.apartmentNumber}
           />
@@ -417,7 +447,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
         <FormField
           id="fullAddress"
-          label="Full Address"
+          label={t("company.fullAddress")}
           type="text"
           value={formData.fullAddress}
           onChange={(e) => handleInputChange("fullAddress", e.target.value)}
@@ -428,15 +458,22 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
       {/* Financial Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Financial Information</h3>
-        
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("company.financialInformation")}
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             id="annualRevenue"
-            label="Annual Revenue"
+            label={t("company.annualRevenue")}
             type="number"
             value={formData.annualRevenue.toString()}
-            onChange={(e) => handleInputChange("annualRevenue", parseFloat(e.target.value) || 0)}
+            onChange={(e) =>
+              handleInputChange(
+                "annualRevenue",
+                parseFloat(e.target.value) || 0
+              )
+            }
             placeholder="1000000"
             min="0"
             step="0.01"
@@ -445,10 +482,12 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
           <FormField
             id="employeeCount"
-            label="Employee Count"
+            label={t("company.employeeCount")}
             type="number"
             value={formData.employeeCount.toString()}
-            onChange={(e) => handleInputChange("employeeCount", parseInt(e.target.value) || 0)}
+            onChange={(e) =>
+              handleInputChange("employeeCount", parseInt(e.target.value) || 0)
+            }
             placeholder="50"
             min="0"
             step="1"
@@ -459,13 +498,15 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
       {/* Tags */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Tags</h3>
-        
+        <h3 className="text-lg font-medium text-gray-900">
+          {t("company.tags")}
+        </h3>
+
         <FormField
           id="tags"
-          label="Tags (comma-separated)"
+          label={t("company.tagsCommaSeparated")}
           type="text"
-          value={formData.tags.join(', ')}
+          value={formData.tags.join(", ")}
           onChange={(e) => handleTagsChange(e.target.value)}
           placeholder="technology, startup, b2b"
           error={errors.tags}
@@ -480,8 +521,6 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
           ))}
         </div>
       )}
-
-
     </form>
   );
 }

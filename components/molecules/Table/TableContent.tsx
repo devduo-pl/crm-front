@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { TableColumn, TableAction } from "./types";
 import { TableEmptyState } from "./TableEmptyState";
+import { useTableTranslations } from "@/hooks/useTranslations";
 
 interface TableContentProps<T = Record<string, unknown>> {
   data: T[];
@@ -25,6 +26,7 @@ export function TableContent<T = Record<string, unknown>>({
   emptyMessage,
   emptyDescription,
 }: TableContentProps<T>) {
+  const t = useTableTranslations();
   const hasActions = actions.length > 0;
 
   // Empty state
@@ -40,7 +42,7 @@ export function TableContent<T = Record<string, unknown>>({
                 </TableHead>
               ))}
               {hasActions && (
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -71,7 +73,7 @@ export function TableContent<T = Record<string, unknown>>({
               </TableHead>
             ))}
             {hasActions && (
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">{t("actions")}</TableHead>
             )}
           </TableRow>
         </TableHeader>
