@@ -1,8 +1,13 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Sidebar } from "@/components/organisms/Sidebar";
+import { AppSidebar } from "@/components/organisms/Sidebar";
 import { UserMenu } from "@/components/molecules/UserMenu";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -10,16 +15,14 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <Sidebar />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="px-6 py-4">
-            <div className="flex justify-between items-center">
+        <header className="bg-background sticky top-0 z-40 border-b">
+          <div className="flex h-16 shrink-0 items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <div className="ml-auto">
               <UserMenu />
               {/* Uncomment to add language switcher to dashboard header 
               <DashboardLanguageSwitcher />
@@ -29,12 +32,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="px-6 py-6">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
+        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   );
-} 
+}

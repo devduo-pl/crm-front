@@ -1,12 +1,23 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { NavItem } from "@/components/atoms/NavItem";
-import { NavSection } from "@/components/atoms/NavSection";
+import Link from "next/link";
 import { Icons } from "@/components/atoms/Icons";
 import { useNavigationTranslations } from "@/hooks/useTranslations";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
-export function Sidebar() {
+export function AppSidebar() {
   const pathname = usePathname();
   const t = useNavigationTranslations();
 
@@ -34,50 +45,54 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="flex flex-col w-64 bg-gray-800">
-      {/* Logo */}
-      <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">DC</span>
+    <Sidebar>
+      <SidebarHeader>
+        <div className="flex items-center h-16 flex-shrink-0 px-4">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">DC</span>
+              </div>
+            </div>
+            <div className="ml-3">
+              <p className="text-white text-lg font-semibold">DevDuo CRM</p>
             </div>
           </div>
-          <div className="ml-3">
-            <p className="text-white text-lg font-semibold">DevDuo CRM</p>
-          </div>
         </div>
-      </div>
+      </SidebarHeader>
 
-      {/* Navigation */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <nav className="flex-1 px-2 py-4 space-y-8">
-          {/* Main Navigation */}
-          <NavSection title={t("main")}>
-            {navigation.map((item) => (
-              <NavItem
-                key={item.name}
-                href={item.href}
-                icon={item.icon}
-                isActive={pathname === item.href}
-              >
-                {item.name}
-              </NavItem>
-            ))}
-          </NavSection>
-        </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>{t("main")}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href}>
+                      {item.icon}
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-        {/* Settings at bottom */}
-        <div className="flex-shrink-0 px-2 pb-4">
-          <NavItem
-            href="/settings"
-            icon={<Icons.Settings />}
-            isActive={pathname === "/settings"}
-          >
-            {t("settings")}
-          </NavItem>
-        </div>
-      </div>
-    </div>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={pathname === "/settings"}>
+              <Link href="/settings">
+                <Icons.Settings />
+                <span>{t("settings")}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

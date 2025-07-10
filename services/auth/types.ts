@@ -3,6 +3,7 @@ import type { User } from "@/types/user";
 export interface LoginCredentials {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export interface LoginResponse {
