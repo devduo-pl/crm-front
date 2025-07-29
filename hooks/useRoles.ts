@@ -67,4 +67,44 @@ export function useDeleteRole() {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
     },
   });
-} 
+}
+
+// Hook to change user role (replace all existing roles with one role)
+export function useChangeUserRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) =>
+      rolesService.changeUserRole(userId, roleId),
+    onSuccess: () => {
+      // Invalidate users query to refresh the table
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+}
+
+// Hook to assign role to user (add additional role)
+export function useAssignRoleToUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) =>
+      rolesService.assignRoleToUser(userId, roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+}
+
+// Hook to remove role from user
+export function useRemoveRoleFromUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) =>
+      rolesService.removeRoleFromUser(userId, roleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+}
