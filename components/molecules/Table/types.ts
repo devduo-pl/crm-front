@@ -29,6 +29,13 @@ export interface PageHeaderAction {
   variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link";
 }
 
+export type SortDirection = "asc" | "desc" | null;
+
+export interface SortState {
+  column: string | null;
+  direction: SortDirection;
+}
+
 export interface TableProps<T = Record<string, unknown>> {
   // Data and columns
   data: T[];
@@ -63,4 +70,15 @@ export interface TableProps<T = Record<string, unknown>> {
   
   // Layout
   showCard?: boolean;
-} 
+  
+  // Sorting
+  sortable?: boolean;
+  sortState?: SortState;
+  onSortChange?: (column: string, direction: SortDirection) => void;
+  
+  // Search/Filtering
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
+  showFilters?: boolean;
+}

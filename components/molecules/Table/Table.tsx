@@ -13,6 +13,7 @@ import { TableContent } from "./TableContent";
 import { TableLoadingState } from "./TableLoadingState";
 import { TableErrorState } from "./TableErrorState";
 import { TablePagination } from "./TablePagination";
+import { TableFilters } from "./TableFilters";
 
 export function Table<T = Record<string, unknown>>({
   data,
@@ -33,55 +34,80 @@ export function Table<T = Record<string, unknown>>({
   minItemsForPagination = 10,
   loadingRows = 5,
   showCard = true,
+  sortable = false,
+  sortState,
+  onSortChange,
+  searchValue,
+  onSearchChange,
+  searchPlaceholder,
+  showFilters = false,
 }: TableProps<T>) {
-  // Generate card description based on loading state and data
-  const getCardDescription = () => {
-    if (cardDescription) return cardDescription;
-    if (description) return description;
-    if (isLoading) return "Loading...";
-    if (pagination) return `${pagination.total} items total`;
-    return `${data.length} items`;
-  };
-
-  // Get the main title (prefer title over cardTitle)
+  
+  // Helper functions for titles and descriptions
   const getMainTitle = () => {
     return title || cardTitle;
   };
+
+  const getCardDescription = () => {
+    return cardDescription || description;
+  };
+
+  // Show filters if search functionality is provided
+  const shouldShowFilters = showFilters || (searchValue !== undefined && onSearchChange);
 
   // Main content component
   const MainContent = () => {
     // Error state
     if (error) {
-      return showCard ? (
+      return (
         <Card>
-          <CardContent className="p-6">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div>
+                {getMainTitle() && <CardTitle>{getMainTitle()}</CardTitle>}
+                <CardDescription>{getCardDescription()}</CardDescription>
+              </div>
+              {headerActions.length > 0 && (
+                <div className="flex space-x-2">
+                  {headerActions.map((action, index) => (
+                    <Button
+                      key={index}
+                      variant={action.variant}
+                      onClick={action.onClick}
+                    >
+                      {action.label}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
             <TableErrorState error={error} onRetry={onRetry} />
           </CardContent>
         </Card>
-      ) : (
-        <TableErrorState error={error} onRetry={onRetry} />
       );
     }
 
     // Loading state
-    if (isLoading) {
-      const loadingContent = (
-        <>
-          <TableLoadingState
-            columns={columns}
-            actions={actions}
-            loadingRows={loadingRows}
+    const loadingContent = (
+      <div className="space-y-4">
+        {shouldShowFilters && searchValue !== undefined && onSearchChange && (
+          <TableFilters
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            searchPlaceholder={searchPlaceholder}
           />
-          {pagination && onPageChange && (
-            <TablePagination
-              pagination={pagination}
-              onPageChange={onPageChange}
-              minItemsForPagination={minItemsForPagination}
-            />
-          )}
-        </>
-      );
+        )}
+        <TableLoadingState
+          columns={columns}
+          actions={actions}
+          loadingRows={loadingRows}
+        />
+      </div>
+    );
 
+    if (isLoading) {
       return showCard ? (
         <Card>
           <CardHeader>
@@ -114,13 +140,23 @@ export function Table<T = Record<string, unknown>>({
 
     // Normal content
     const tableContent = (
-      <>
+      <div className="space-y-4">
+        {shouldShowFilters && searchValue !== undefined && onSearchChange && (
+          <TableFilters
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            searchPlaceholder={searchPlaceholder}
+          />
+        )}
         <TableContent
           data={data}
           columns={columns}
           actions={actions}
           emptyMessage={emptyMessage}
           emptyDescription={emptyDescription}
+          sortable={sortable}
+          sortState={sortState}
+          onSortChange={onSortChange}
         />
         {pagination && onPageChange && (
           <TablePagination
@@ -129,7 +165,7 @@ export function Table<T = Record<string, unknown>>({
             minItemsForPagination={minItemsForPagination}
           />
         )}
-      </>
+      </div>
     );
 
     return showCard ? (

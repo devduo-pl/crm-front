@@ -19,6 +19,8 @@ import {
   useCreateUser,
   useUpdateUser,
 } from "@/hooks/useUsers";
+import { useTableSorting } from "@/hooks/useTableSorting";
+import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { useNotification } from "@/hooks/useNotification";
 import type { User } from "@/types/user";
 import {
@@ -33,13 +35,17 @@ export function UsersPage() {
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
   const [confirmationDialog, setConfirmationDialog] = useState<{
     isOpen: boolean;
-    type: "ban" | "unban";
     user: User | undefined;
+    type: "ban" | "unban";
   }>({
     isOpen: false,
-    type: "ban",
     user: undefined,
+    type: "ban",
   });
+
+  const tUsers = useUsersTranslations();
+  const tTable = useTableTranslations();
+  const tCommon = useCommonTranslations();
 
   const {
     data: usersResponse,
@@ -48,14 +54,11 @@ export function UsersPage() {
     refetch,
   } = useUsers({ page, limit: 10 });
 
-  const banUserMutation = useBanUser();
-  const unbanUserMutation = useUnbanUser();
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
+  const banUserMutation = useBanUser();
+  const unbanUserMutation = useUnbanUser();
   const { showSuccess, showError } = useNotification();
-  const tUsers = useUsersTranslations();
-  const tTable = useTableTranslations();
-  const tCommon = useCommonTranslations();
 
   const users = usersResponse?.data || [];
   const pagination: PaginationInfo = {
@@ -65,21 +68,33 @@ export function UsersPage() {
     totalPages: usersResponse?.totalPages || 0,
   };
 
+  const { searchValue, setSearchValue, filteredData } = useGlobalSearch({
+    data: users,
+    searchFields: ["firstName", "lastName", "email", "isActive"],
+  });
+
+  const { sortState, sortedData: sortedUsers, onSortChange } = useTableSorting<User>({
+    data: filteredData,
+  });
+
   const columns: TableColumn<User>[] = [
     {
       key: "name",
       header: tUsers("name"),
       render: (_, row) => `${row.firstName} ${row.lastName}`,
       className: "font-medium",
+      sortable: true,
     },
     {
       key: "email",
       header: "Email",
+      sortable: true,
     },
     {
       key: "isActive",
       header: tUsers("status"),
       render: (value) => <StatusBadge status={value ? "active" : "inactive"} />,
+      sortable: true,
     },
     {
       key: "roles",
@@ -90,11 +105,13 @@ export function UsersPage() {
           ? roles.join(", ")
           : tUsers("noRoleAssigned");
       },
+      sortable: false,
     },
     {
       key: "createdAt",
       header: tUsers("created"),
       render: (value) => new Date(value as string).toLocaleDateString(),
+      sortable: true,
     },
   ];
 
@@ -162,99 +179,71 @@ export function UsersPage() {
     }
   }
 
-  async function handleFormSubmit(formData: UserFormData) {
-    try {
-      if (editingUser) {
-        await updateUserMutation.mutateAsync({
-          id: editingUser.id,
-          data: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-          },
-        });
-        showSuccess(
-          tUsers("userUpdatedSuccess"),
-          `${formData.firstName} ${formData.lastName} ${tUsers("userUpdated")}`
-        );
-      } else {
-        await createUserMutation.mutateAsync({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-        });
-        showSuccess(
-          tUsers("userCreatedSuccess"),
-          `${formData.firstName} ${formData.lastName} ${tUsers(
-            "userAddedToSystem"
-          )}`
-        );
-      }
-
-      handleClosePopup();
-    } catch (err) {
-      console.error("Error saving user:", err);
-      showError(
-        editingUser
-          ? tUsers("failedToUpdateUser")
-          : tUsers("failedToCreateUser"),
-        err instanceof Error ? err.message : tCommon("error")
-      );
-    }
-  }
-
   function handleBanConfirmation(user: User) {
     setConfirmationDialog({
       isOpen: true,
-      type: "ban",
       user,
+      type: "ban",
     });
   }
 
   function handleUnbanConfirmation(user: User) {
     setConfirmationDialog({
       isOpen: true,
-      type: "unban",
       user,
+      type: "unban",
     });
   }
 
   function handleCloseConfirmation() {
     setConfirmationDialog({
       isOpen: false,
-      type: "ban",
       user: undefined,
+      type: "ban",
     });
   }
 
   async function handleConfirmAction() {
     if (!confirmationDialog.user) return;
 
-    const userName = `${confirmationDialog.user.firstName} ${confirmationDialog.user.lastName}`;
-
     try {
       if (confirmationDialog.type === "ban") {
         await banUserMutation.mutateAsync(confirmationDialog.user.id);
-        showSuccess(
-          tUsers("userBannedSuccess"),
-          `${userName} ${tUsers("userBannedMessage")}`
-        );
+        showSuccess(tUsers("userBannedSuccess"), `${confirmationDialog.user.firstName} ${confirmationDialog.user.lastName} ${tUsers("userBannedMessage")}`);
       } else {
         await unbanUserMutation.mutateAsync(confirmationDialog.user.id);
-        showSuccess(
-          tUsers("userUnbannedSuccess"),
-          `${userName} ${tUsers("userUnbannedMessage")}`
-        );
+        showSuccess(tUsers("userUnbannedSuccess"), `${confirmationDialog.user.firstName} ${confirmationDialog.user.lastName} ${tUsers("userUnbannedMessage")}`);
       }
-
       handleCloseConfirmation();
-    } catch (err) {
-      console.error(`Error ${confirmationDialog.type}ning user:`, err);
+      refetch();
+    } catch (error) {
+      console.error("Failed to update user status:", error);
       showError(
-        confirmationDialog.type === "ban"
-          ? tUsers("failedToBanUser")
-          : tUsers("failedToUnbanUser"),
-        err instanceof Error ? err.message : tCommon("error")
+        confirmationDialog.type === "ban" ? tUsers("failedToBanUser") : tUsers("failedToUnbanUser"),
+        confirmationDialog.type === "ban" ? tUsers("failedToBanUser") : tUsers("failedToUnbanUser")
+      );
+    }
+  }
+
+  async function handleFormSubmit(formData: UserFormData) {
+    try {
+      if (editingUser) {
+        await updateUserMutation.mutateAsync({
+          id: editingUser.id,
+          data: formData,
+        });
+        showSuccess(tUsers("userUpdatedSuccess"), `${editingUser.firstName} ${editingUser.lastName} ${tUsers("userUpdated")}`);
+      } else {
+        await createUserMutation.mutateAsync(formData);
+        showSuccess(tUsers("userCreatedSuccess"), `${formData.firstName} ${formData.lastName} ${tUsers("userAddedToSystem")}`);
+      }
+      handleClosePopup();
+      refetch();
+    } catch (error) {
+      console.error("Failed to save user:", error);
+      showError(
+        editingUser ? tUsers("failedToUpdateUser") : tUsers("failedToCreateUser"),
+        editingUser ? tUsers("failedToUpdateUser") : tUsers("failedToCreateUser")
       );
     }
   }
@@ -286,7 +275,7 @@ export function UsersPage() {
         description={tUsers("description")}
         headerActions={headerActions}
         cardTitle={tUsers("allUsers")}
-        data={users}
+        data={sortedUsers}
         columns={columns}
         actions={actions}
         isLoading={isLoading}
@@ -296,6 +285,11 @@ export function UsersPage() {
         emptyDescription={tUsers("noUsersDescription")}
         pagination={pagination}
         onPageChange={setPage}
+        sortable={true}
+        sortState={sortState}
+        onSortChange={onSortChange}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
       />
 
       <Popup

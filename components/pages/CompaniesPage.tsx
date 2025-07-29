@@ -21,6 +21,8 @@ import {
   useUpdateCompany,
   useDeleteCompany,
 } from "@/hooks/useCompanies";
+import { useTableSorting } from "@/hooks/useTableSorting";
+import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { useNotification } from "@/hooks/useNotification";
 import {
   useCompaniesTranslations,
@@ -67,21 +69,33 @@ export function CompaniesPage() {
     totalPages: companiesResponse?.meta?.totalPages || 0,
   };
 
+  const { searchValue, setSearchValue, filteredData } = useGlobalSearch({
+    data: companies,
+    searchFields: ["name", "nip", "industry", "city", "status"],
+  });
+
+  const { sortState, sortedData: sortedCompanies, onSortChange } = useTableSorting<Company>({
+    data: filteredData,
+  });
+
   const columns: TableColumn<Company>[] = [
     {
       key: "name",
       header: t("companyName"),
       className: "font-medium",
+      sortable: true,
     },
     {
       key: "nip",
       header: t("nip"),
       render: (value) => (value as string) || "—",
+      sortable: true,
     },
     {
       key: "industry",
       header: t("industry"),
       render: (value) => (value as string) || "—",
+      sortable: true,
     },
     {
       key: "status",
@@ -89,16 +103,19 @@ export function CompaniesPage() {
       render: (value) => (
         <StatusBadge status={value as "active" | "inactive"} />
       ),
+      sortable: true,
     },
     {
       key: "city",
       header: t("city"),
       render: (value) => (value as string) || "—",
+      sortable: true,
     },
     {
       key: "employeeCount",
       header: t("employees"),
       render: (value) => (value ? (value as number).toString() : "—"),
+      sortable: true,
     },
     {
       key: "createdAt",
@@ -165,55 +182,6 @@ export function CompaniesPage() {
     }
   }
 
-  // Helper function to ensure numeric fields are properly converted
-  const transformFormData = (formData: CompanyFormData): CompanyFormData => ({
-    ...formData,
-    annualRevenue:
-      typeof formData.annualRevenue === "string"
-        ? parseFloat(formData.annualRevenue) || 0
-        : formData.annualRevenue,
-    employeeCount:
-      typeof formData.employeeCount === "string"
-        ? parseInt(formData.employeeCount) || 0
-        : formData.employeeCount,
-  });
-
-  async function handleFormSubmit(formData: CompanyFormData) {
-    try {
-      // Transform data to ensure proper types
-      const transformedData = transformFormData(formData);
-
-      if (editingCompany) {
-        await updateCompanyMutation.mutateAsync({
-          id: editingCompany.id,
-          data: transformedData,
-        });
-        showSuccess(
-          t("companyUpdatedSuccess"),
-          `${formData.name} ${t("companyUpdated")}`
-        );
-      } else {
-        await createCompanyMutation.mutateAsync(transformedData);
-        showSuccess(
-          t("companyCreatedSuccess"),
-          `${formData.name} ${t("companyAddedToSystem")}`
-        );
-      }
-
-      handleClosePopup();
-    } catch (err) {
-      console.error("Error saving company:", err);
-      showError(
-        editingCompany
-          ? t("failedToUpdateCompany")
-          : t("failedToCreateCompany"),
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred. Please try again."
-      );
-    }
-  }
-
   function handleDeleteConfirmation(company: Company) {
     setConfirmationDialog({
       isOpen: true,
@@ -231,39 +199,46 @@ export function CompaniesPage() {
   async function handleConfirmDelete() {
     if (!confirmationDialog.company) return;
 
-    const companyName = confirmationDialog.company.name;
-
     try {
       await deleteCompanyMutation.mutateAsync(confirmationDialog.company.id);
-      showSuccess(
-        t("companyDeletedSuccess"),
-        `${companyName} ${t("companyRemovedFromSystem")}`
-      );
-
+      showSuccess(t("companyDeletedSuccess"), `${confirmationDialog.company.name} ${t("companyRemovedFromSystem")}`);
       handleCloseConfirmation();
-    } catch (err) {
-      console.error("Error deleting company:", err);
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete company:", error);
+      showError(t("failedToDeleteCompany"), t("failedToDeleteCompany"));
+    }
+  }
+
+  async function handleFormSubmit(formData: CompanyFormData) {
+    try {
+      if (editingCompany) {
+        await updateCompanyMutation.mutateAsync({
+          id: editingCompany.id,
+          data: formData,
+        });
+        showSuccess(t("companyUpdatedSuccess"), `${editingCompany.name} ${t("companyUpdated")}`);
+      } else {
+        await createCompanyMutation.mutateAsync(formData);
+        showSuccess(t("companyCreatedSuccess"), `${formData.name} ${t("companyAddedToSystem")}`);
+      }
+      handleClosePopup();
+      refetch();
+    } catch (error) {
+      console.error("Failed to save company:", error);
       showError(
-        t("failedToDeleteCompany"),
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred. Please try again."
+        editingCompany ? t("failedToUpdateCompany") : t("failedToCreateCompany"),
+        editingCompany ? t("failedToUpdateCompany") : t("failedToCreateCompany")
       );
     }
   }
 
-  const getConfirmationContent = () => {
-    if (!confirmationDialog.company) return { title: "", message: "" };
-
-    const companyName = confirmationDialog.company.name;
-
-    return {
-      title: t("deleteCompany"),
-      message: t("deleteCompanyConfirm", { name: companyName }),
-    };
+  const confirmationContent = {
+    title: t("deleteCompany"),
+    message: confirmationDialog.company 
+      ? t("deleteCompanyConfirm", { name: confirmationDialog.company.name })
+      : t("deleteCompanyConfirm", { name: "" }),
   };
-
-  const confirmationContent = getConfirmationContent();
 
   return (
     <>
@@ -272,7 +247,7 @@ export function CompaniesPage() {
         description={t("description")}
         headerActions={headerActions}
         cardTitle={t("allCompanies")}
-        data={companies}
+        data={sortedCompanies}
         columns={columns}
         actions={actions}
         isLoading={isLoading}
@@ -282,6 +257,11 @@ export function CompaniesPage() {
         emptyDescription={t("noCompaniesDescription")}
         pagination={pagination}
         onPageChange={setPage}
+        sortable={true}
+        sortState={sortState}
+        onSortChange={onSortChange}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
       />
 
       <Popup
@@ -291,7 +271,10 @@ export function CompaniesPage() {
         actions={popupActions}
         size="lg"
       >
-        <CompanyForm initialData={editingCompany} onSubmit={handleFormSubmit} />
+        <CompanyForm
+          initialData={editingCompany}
+          onSubmit={handleFormSubmit}
+        />
       </Popup>
 
       <ConfirmationDialog
