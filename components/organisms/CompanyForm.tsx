@@ -6,7 +6,7 @@ import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
 
 import { useBirSearch } from "@/hooks/useCompanies";
-import { useAlert } from "@/contexts/AlertContext";
+import { useAlertStore } from "@/store/useAlertStore";
 import { useFormsTranslations } from "@/hooks/useTranslations";
 import type { CompanyFormData, Company } from "@/types/company";
 
@@ -57,7 +57,7 @@ export function CompanyForm({ initialData, onSubmit }: CompanyFormProps) {
 
   const t = useFormsTranslations();
   const birSearchMutation = useBirSearch();
-  const { addAlert } = useAlert();
+  const addAlert = useAlertStore((state) => state.addAlertWithAutoRemove);
 
   useEffect(() => {
     setFormData(createFormData(initialData));

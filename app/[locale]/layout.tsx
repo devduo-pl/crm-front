@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { AlertDisplay } from "@/components/molecules/Alert";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
         >
           <NextIntlClientProvider messages={messages}>
             <QueryProvider>{children}</QueryProvider>
+            <AlertDisplay />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

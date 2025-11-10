@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store";
-import { useAlert } from "@/contexts/AlertContext";
+import { useAlertStore } from "@/store/useAlertStore";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +19,7 @@ export function ForgotPasswordCard() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const { forgotPassword, isLoading } = useAuthStore();
-  const { addAlert } = useAlert();
+  const addAlert = useAlertStore((state) => state.addAlertWithAutoRemove);
   const router = useRouter();
   const tAuth = useAuthTranslations();
   const tCommon = useCommonTranslations();

@@ -106,7 +106,7 @@ export function ConfirmationDialog({
           <div className="flex items-start space-x-4">
             {/* Icon */}
             <div
-              className={`flex-shrink-0 w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center`}
+              className={`shrink-0 w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center`}
             >
               <div className={styles.icon}>{getIcon()}</div>
             </div>

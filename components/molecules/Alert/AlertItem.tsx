@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { Icons } from "@/components/atoms/Icons";
 import { Alert } from "./types";
@@ -78,7 +80,7 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
       `}
     >
       <div className="flex items-start">
-        <div className={`flex-shrink-0 ${styles.icon}`}>{getIcon()}</div>
+        <div className={`shrink-0 ${styles.icon}`}>{getIcon()}</div>
 
         <div className="ml-3 flex-1">
           <h3 className={`text-sm font-medium ${styles.title}`}>{title}</h3>
@@ -97,7 +99,7 @@ export function AlertItem({ alert, onRemove }: AlertItemProps) {
           )}
         </div>
 
-        <div className="ml-4 flex-shrink-0">
+        <div className="ml-4 shrink-0">
           <button
             onClick={() => onRemove(id)}
             className={`
