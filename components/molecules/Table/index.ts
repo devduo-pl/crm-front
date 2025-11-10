@@ -8,6 +8,7 @@ export { TableLoadingState } from "./TableLoadingState";
 export { TableErrorState } from "./TableErrorState";
 export { TableEmptyState } from "./TableEmptyState";
 export { TablePagination } from "./TablePagination";
+export { TableActionsDropdown } from "./TableActionsDropdown";
 
 // Types
 export type {

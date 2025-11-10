@@ -116,6 +116,15 @@ export const Icons = {
     </svg>
   ),
 
+  // Three dots menu icons
+  MoreVertical: ({ className = "w-4 h-4" }: IconProps = {}) => (
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+      <circle cx="12" cy="18" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+
   // Alert Icons
   AlertTriangle: ({ className = "w-6 h-6" }: IconProps = {}) => (
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
