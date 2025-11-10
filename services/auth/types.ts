@@ -9,11 +9,15 @@ export interface LoginCredentials {
 export interface LoginResponse {
   user: User;
   message?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface RefreshTokenResponse {
   user: User;
   message?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export interface RegisterUserData {

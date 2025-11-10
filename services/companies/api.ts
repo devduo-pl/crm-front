@@ -1,4 +1,4 @@
-import { fetchApi, fetchApiDelete, buildQueryString } from "@/lib/api-client";
+import { fetchApiProxy as fetchApi, fetchApiProxyDelete as fetchApiDelete, buildQueryString } from "@/lib/api-client-proxy";
 import type {
   Company,
   CompanyCreateData,

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isTokenExpired } from "./lib/auth";
 import createIntlMiddleware from "next-intl/middleware";
-import { locales, defaultLocale } from "./i18n";
+import { locales, defaultLocale } from "./i18n/routing";
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
-  "/",
   "/login",
   "/signup",
   "/password-recovery",
@@ -38,7 +37,7 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix: "as-needed",
 });
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip middleware for certain paths to avoid issues
@@ -70,11 +69,21 @@ export function middleware(request: NextRequest) {
   // Check if user is authenticated
   const isAuthenticated = accessToken && !tokenExpired;
 
-  // If user is authenticated and on home page or auth-related routes, redirect to dashboard
+  // Redirect root to login
+  if (pathnameWithoutLocale === "/") {
+    const url = new URL("/login", request.url);
+    // Preserve the locale in the redirect if it's not the default
+    const locale = pathname.match(/^\/([a-z]{2})\//)?.[1];
+    if (locale && locale !== defaultLocale) {
+      url.pathname = `/${locale}/login`;
+    }
+    return NextResponse.redirect(url);
+  }
+
+  // If user is authenticated and on auth-related routes, redirect to dashboard
   if (
     isAuthenticated &&
-    (pathnameWithoutLocale === "/" ||
-      pathnameWithoutLocale === "/login" ||
+    (pathnameWithoutLocale === "/login" ||
       pathnameWithoutLocale === "/signup")
   ) {
     const url = new URL("/dashboard", request.url);

@@ -1,4 +1,4 @@
-import { fetchApi } from "@/lib/api-client";
+import { fetchApiProxy as fetchApi } from "@/lib/api-client-proxy";
 import type {
   LoginCredentials,
   LoginResponse,
@@ -42,9 +42,10 @@ export const authService = {
    */
   refreshToken: async (): Promise<boolean> => {
     try {
-      await fetchApi<RefreshTokenResponse>("/auth/refresh", {
+      const response = await fetchApi<RefreshTokenResponse>("/auth/refresh", {
         method: "POST",
       });
+      console.log("Refresh token response:", response);
       return true;
     } catch (error) {
       console.error("Token refresh failed:", error);
@@ -99,7 +100,10 @@ export const authService = {
   resetPassword: async (token: string, newPassword: string): Promise<void> => {
     await fetchApi("/auth/reset-password", {
       method: "POST",
-      body: JSON.stringify({ token, password: newPassword } as ResetPasswordRequest),
+      body: JSON.stringify({
+        token,
+        password: newPassword,
+      } as ResetPasswordRequest),
     });
   },
 
@@ -111,4 +115,4 @@ export const authService = {
       method: "POST",
     });
   },
-}; 
+};

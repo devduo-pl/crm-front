@@ -1,8 +1,8 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
-import { locales, type Locale, defaultLocale } from "@/i18n";
+import { useRouter, usePathname } from "@/i18n/routing";
+import { locales, type Locale } from "@/i18n";
 
 export function useLanguage() {
   const locale = useLocale() as Locale;
@@ -12,18 +12,8 @@ export function useLanguage() {
   const switchLanguage = (newLocale: Locale) => {
     if (newLocale === locale) return;
 
-    // Remove current locale from pathname
-    const pathWithoutLocale = pathname.replace(`/${locale}`, "") || "/";
-
-    // Create new path with new locale
-    const newPath =
-      newLocale === defaultLocale
-        ? pathWithoutLocale === "/"
-          ? "/"
-          : pathWithoutLocale
-        : `/${newLocale}${pathWithoutLocale}`;
-
-    router.push(newPath);
+    // Use the i18n-aware router which handles locale prefixes automatically
+    router.replace(pathname, { locale: newLocale });
   };
 
   const switchToEnglish = () => switchLanguage("en");

@@ -1,4 +1,4 @@
-import { fetchApi, buildQueryString } from "@/lib/api-client";
+import { fetchApiProxy as fetchApi, buildQueryString } from "@/lib/api-client-proxy";
 import type {
   User,
   UserCreateData,

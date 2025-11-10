@@ -1,13 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { rolesService } from '@/services/roles';
-import type { RoleUpdateData, RoleCreateData } from '@/services/roles';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { rolesService } from "@/services/roles";
+import type { RoleUpdateData, RoleCreateData } from "@/services/roles";
 
 // Query keys for React Query
 export const roleKeys = {
-  all: ['roles'] as const,
-  lists: () => [...roleKeys.all, 'list'] as const,
+  all: ["roles"] as const,
+  lists: () => [...roleKeys.all, "list"] as const,
   list: () => [...roleKeys.lists()] as const,
-  details: () => [...roleKeys.all, 'detail'] as const,
+  details: () => [...roleKeys.all, "detail"] as const,
   detail: (id: number) => [...roleKeys.details(), id] as const,
 };
 
@@ -35,8 +35,7 @@ export function useCreateRole() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: RoleCreateData) => 
-      rolesService.createRole(data),
+    mutationFn: (data: RoleCreateData) => rolesService.createRole(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
     },
@@ -78,7 +77,7 @@ export function useChangeUserRole() {
       rolesService.changeUserRole(userId, roleId),
     onSuccess: () => {
       // Invalidate users query to refresh the table
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }
@@ -91,7 +90,7 @@ export function useAssignRoleToUser() {
     mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) =>
       rolesService.assignRoleToUser(userId, roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }
@@ -104,7 +103,7 @@ export function useRemoveRoleFromUser() {
     mutationFn: ({ userId, roleId }: { userId: number; roleId: number }) =>
       rolesService.removeRoleFromUser(userId, roleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }

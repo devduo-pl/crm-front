@@ -7,6 +7,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { Icons } from "@/components/atoms/Icons";
 import { Button } from "@/components/ui/button";
 import { useNavigationTranslations } from "@/hooks/useTranslations";
+import { DashboardLanguageSwitcher } from "@/components/examples/DashboardLanguageSwitcher";
 
 export function UserMenu() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -26,10 +27,7 @@ export function UserMenu() {
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      showError(
-        t("signOutFailed"),
-        t("signOutError")
-      );
+      showError(t("signOutFailed"), t("signOutError"));
     } finally {
       setIsLoggingOut(false);
     }
@@ -60,7 +58,6 @@ export function UserMenu() {
           <p className="text-xs text-gray-500">{user.email}</p>
         </div>
       </div>
-
       {/* Sign Out Button */}
       <Button
         variant="outline"
@@ -77,7 +74,8 @@ export function UserMenu() {
         <span className="hidden sm:inline">
           {isLoggingOut ? t("signingOut") : t("signOut")}
         </span>
-      </Button>
+      </Button>{" "}
+      <DashboardLanguageSwitcher />
     </div>
   );
 }

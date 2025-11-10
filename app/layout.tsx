@@ -1,20 +1,15 @@
+import type { Metadata } from "next";
 import "@/styles/globals.css";
-import { ThemeScript } from "@/components/ThemeScript";
-import { Providers } from "@/providers/Providers";
+
+export const metadata: Metadata = {
+  title: "DevDuo CRM",
+  description: "A modern CRM solution for your business",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html>
-      <head>
-        <ThemeScript />
-      </head>
-      <body suppressHydrationWarning={true}>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  );
+  return children;
 }

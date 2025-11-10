@@ -5,11 +5,6 @@ import { useAuthTranslations } from "@/hooks/useTranslations";
 
 export function LoginPage() {
   const t = useAuthTranslations();
-  
-  return (
-    <AuthForm 
-      title={t('welcomeBack')} 
-      subtitle={t('signInSubtitle')}
-    />
-  );
-} 
+
+  return <AuthForm title={t("welcomeBack")} subtitle={t("signInSubtitle")} />;
+}

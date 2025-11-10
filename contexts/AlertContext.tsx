@@ -1,45 +1,47 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { Alert, AlertContextType } from '@/components/molecules/Alert/types';
-import { AlertContainer } from '@/components/molecules/Alert';
+import React, { createContext, useContext } from "react";
+import { useAlertStore } from "@/store/useAlertStore";
+import { AlertContainer } from "@/components/molecules/Alert";
+
+export interface Alert {
+  id: string;
+  type: "success" | "error" | "warning" | "info";
+  title: string;
+  message?: string;
+  duration?: number;
+}
+
+interface AlertContextType {
+  alerts: Alert[];
+  addAlert: (alert: Omit<Alert, "id">) => void;
+  removeAlert: (id: string) => void;
+  clearAlerts: () => void;
+}
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
-interface AlertProviderProps {
-  children: ReactNode;
-}
+export function AlertProvider({ children }: { children: React.ReactNode }) {
+  const { alerts, addAlert, removeAlert, clearAlerts } = useAlertStore();
 
-export function AlertProvider({ children }: AlertProviderProps) {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
+  // Wrap addAlert to auto-remove after duration
+  const addAlertWithAutoRemove = (alert: Omit<Alert, "id">) => {
+    const id =
+      Math.random().toString(36).substring(2) + Date.now().toString(36);
+    
+    addAlert(alert);
 
-  const addAlert = useCallback((alertData: Omit<Alert, 'id'>) => {
-    const id = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    const newAlert: Alert = {
-      ...alertData,
-      id,
-    };
-
-    setAlerts(prev => [...prev, newAlert]);
-  }, []);
-
-  const removeAlert = useCallback((id: string) => {
-    setAlerts(prev => prev.filter(alert => alert.id !== id));
-  }, []);
-
-  const clearAlerts = useCallback(() => {
-    setAlerts([]);
-  }, []);
-
-  const value: AlertContextType = {
-    alerts,
-    addAlert,
-    removeAlert,
-    clearAlerts,
+    // Auto remove after duration (default 5 seconds)
+    const duration = alert.duration || 5000;
+    setTimeout(() => {
+      removeAlert(id);
+    }, duration);
   };
 
   return (
-    <AlertContext.Provider value={value}>
+    <AlertContext.Provider
+      value={{ alerts, addAlert: addAlertWithAutoRemove, removeAlert, clearAlerts }}
+    >
       {children}
       <AlertContainer alerts={alerts} onRemove={removeAlert} />
     </AlertContext.Provider>
@@ -48,8 +50,9 @@ export function AlertProvider({ children }: AlertProviderProps) {
 
 export function useAlert() {
   const context = useContext(AlertContext);
-  if (context === undefined) {
-    throw new Error('useAlert must be used within an AlertProvider');
+  if (!context) {
+    throw new Error("useAlert must be used within an AlertProvider");
   }
   return context;
-} 
+}
+

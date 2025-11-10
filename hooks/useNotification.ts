@@ -1,12 +1,16 @@
-import { useAlert } from '@/contexts/AlertContext';
-import { Alert } from '@/components/molecules/Alert/types';
+import { useAlertStore } from "@/store";
+import { Alert } from "@/components/molecules/Alert/types";
 
 export function useNotification() {
-  const { addAlert } = useAlert();
+  const { addAlert } = useAlertStore();
 
-  const showSuccess = (title: string, message?: string, options?: Partial<Alert>) => {
+  const showSuccess = (
+    title: string,
+    message?: string,
+    options?: Partial<Alert>
+  ) => {
     addAlert({
-      type: 'success',
+      type: "success",
       title,
       message,
       duration: 10000,
@@ -14,19 +18,13 @@ export function useNotification() {
     });
   };
 
-  const showError = (title: string, message?: string, options?: Partial<Alert>) => {
+  const showError = (
+    title: string,
+    message?: string,
+    options?: Partial<Alert>
+  ) => {
     addAlert({
-      type: 'error',
-      title,
-      message,
-      duration: 10000, 
-      ...options,
-    });
-  };
-
-  const showWarning = (title: string, message?: string, options?: Partial<Alert>) => {
-    addAlert({
-      type: 'warning',
+      type: "error",
       title,
       message,
       duration: 10000,
@@ -34,9 +32,27 @@ export function useNotification() {
     });
   };
 
-  const showInfo = (title: string, message?: string, options?: Partial<Alert>) => {
+  const showWarning = (
+    title: string,
+    message?: string,
+    options?: Partial<Alert>
+  ) => {
     addAlert({
-      type: 'info',
+      type: "warning",
+      title,
+      message,
+      duration: 10000,
+      ...options,
+    });
+  };
+
+  const showInfo = (
+    title: string,
+    message?: string,
+    options?: Partial<Alert>
+  ) => {
+    addAlert({
+      type: "info",
       title,
       message,
       duration: 10000,
@@ -52,4 +68,4 @@ export function useNotification() {
     // Direct access to addAlert for custom alerts
     addAlert,
   };
-} 
+}

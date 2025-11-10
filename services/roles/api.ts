@@ -1,4 +1,4 @@
-import { fetchApi } from "@/lib/api-client";
+import { fetchApiProxy as fetchApi } from "@/lib/api-client-proxy";
 import type {
   Role,
   RoleUpdateData,

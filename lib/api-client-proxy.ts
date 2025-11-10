@@ -1,6 +1,10 @@
-import { API_CONFIG } from "./config";
+/**
+ * Client-side API client that uses Next.js API routes as a proxy
+ * This avoids CORS issues and keeps the backend URL hidden
+ */
 
-const BASE_URL = API_CONFIG.BASE_URL;
+// Use Next.js API proxy route instead of direct backend URL
+const PROXY_BASE_URL = "/api/proxy";
 
 export interface ApiErrorResponse {
   message: string;
@@ -20,13 +24,6 @@ export class ApiError extends Error {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  // Log response headers and cookies for debugging
-  console.log(
-    "Response headers:",
-    Object.fromEntries(response.headers.entries())
-  );
-  console.log("Set-Cookie header:", response.headers.get("set-cookie"));
-
   if (!response.ok) {
     const error = await response
       .json()
@@ -38,17 +35,22 @@ async function handleResponse<T>(response: Response): Promise<T> {
     );
   }
 
-  const data = await response.json();
-  console.log("Response data:", data);
-  return data;
+  return response.json();
 }
 
-export async function fetchApi<T>(
+/**
+ * Make an API call through the Next.js proxy
+ * Cookies are automatically included in same-origin requests
+ */
+export async function fetchApiProxy<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${BASE_URL}${endpoint}`;
-  console.log("API Call URL:", url);
+  // Remove leading slash from endpoint if present
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  const url = `${PROXY_BASE_URL}/${cleanEndpoint}`;
+
+  console.log("API Call URL (via proxy):", url);
 
   // Prepare headers
   const headers: Record<string, string> = {
@@ -59,18 +61,23 @@ export async function fetchApi<T>(
   const response = await fetch(url, {
     ...options,
     headers,
-    credentials: "include",
+    credentials: "include", // Include cookies
   });
 
   return handleResponse<T>(response);
 }
 
-export async function fetchApiDelete(
+/**
+ * DELETE request through proxy
+ */
+export async function fetchApiProxyDelete(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<void> {
-  const url = `${BASE_URL}${endpoint}`;
-  console.log("API Call URL (DELETE):", url);
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  const url = `${PROXY_BASE_URL}/${cleanEndpoint}`;
+
+  console.log("API Call URL (DELETE via proxy):", url);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -84,7 +91,6 @@ export async function fetchApiDelete(
     credentials: "include",
   });
 
-  // For DELETE operations, we only care about the status
   if (!response.ok) {
     const error = await response
       .json()
@@ -95,8 +101,6 @@ export async function fetchApiDelete(
       error as ApiErrorResponse
     );
   }
-
-  return;
 }
 
 type QueryParamValue = string | number | boolean | null | undefined;
@@ -115,3 +119,4 @@ export function buildQueryString(
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : "";
 }
+
