@@ -4,7 +4,6 @@ import type {
   RoleUpdateData,
   AssignRoleRequest,
   UpdateUserRolesRequest,
-  ChangeUserRoleRequest,
   RoleCreateData,
 } from "./types";
 
@@ -49,16 +48,6 @@ export const rolesService = {
   deleteRole: async (id: number): Promise<void> => {
     return fetchApi<void>(`/roles/${id}`, {
       method: "DELETE",
-    });
-  },
-
-  /**
-   * Change user role (replace all existing roles with one role)
-   */
-  changeUserRole: async (userId: number, roleId: number): Promise<void> => {
-    return fetchApi<void>(`/users/${userId}/role`, {
-      method: "PUT",
-      body: JSON.stringify({ roleId } as ChangeUserRoleRequest),
     });
   },
 

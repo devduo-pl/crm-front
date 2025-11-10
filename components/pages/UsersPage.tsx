@@ -10,7 +10,6 @@ import {
 } from "@/components/molecules/Table";
 import { Popup, PopupAction } from "@/components/molecules/Popup";
 import { ConfirmationDialog } from "@/components/molecules/ConfirmationDialog";
-import { RoleAssignmentPopup } from "@/components/molecules/RoleAssignmentPopup";
 import { UserForm, UserFormData } from "@/components/organisms/UserForm";
 import { StatusBadge } from "@/components/atoms/StatusBadge";
 import {
@@ -33,9 +32,7 @@ import {
 export function UsersPage() {
   const [page, setPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isRolePopupOpen, setIsRolePopupOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
-  const [roleAssignmentUser, setRoleAssignmentUser] = useState<User | null>(null);
   const [confirmationDialog, setConfirmationDialog] = useState<{
     isOpen: boolean;
     user: User | undefined;
@@ -125,11 +122,6 @@ export function UsersPage() {
       variant: "outline",
     },
     {
-      label: tUsers("assignRole"),
-      onClick: (user) => handleRoleAssignment(user),
-      variant: "outline",
-    },
-    {
       label: tTable("ban"),
       onClick: (user) => handleBanConfirmation(user),
       variant: "destructive",
@@ -175,19 +167,9 @@ export function UsersPage() {
     setIsPopupOpen(true);
   }
 
-  function handleRoleAssignment(user: User) {
-    setRoleAssignmentUser(user);
-    setIsRolePopupOpen(true);
-  }
-
   function handleClosePopup() {
     setIsPopupOpen(false);
     setEditingUser(undefined);
-  }
-
-  function handleCloseRolePopup() {
-    setIsRolePopupOpen(false);
-    setRoleAssignmentUser(null);
   }
 
   function handleSaveUser() {
@@ -325,13 +307,6 @@ export function UsersPage() {
           }
         />
       </Popup>
-
-      <RoleAssignmentPopup
-        isOpen={isRolePopupOpen}
-        onClose={handleCloseRolePopup}
-        user={roleAssignmentUser}
-        onSuccess={refetch}
-      />
 
       <ConfirmationDialog
         isOpen={confirmationDialog.isOpen}
