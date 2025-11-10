@@ -55,39 +55,6 @@ export async function fetchApi<T>(
   return handleResponse<T>(response);
 }
 
-export async function fetchApiDelete(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<void> {
-  const url = `${BASE_URL}${endpoint}`;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string>),
-  };
-
-  const response = await fetch(url, {
-    ...options,
-    method: "DELETE",
-    headers,
-    credentials: "include",
-  });
-
-  // For DELETE operations, we only care about the status
-  if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "An error occurred" }));
-    throw new ApiError(
-      response.status,
-      error.message || "An error occurred",
-      error as ApiErrorResponse
-    );
-  }
-
-  return;
-}
-
 type QueryParamValue = string | number | boolean | null | undefined;
 
 export function buildQueryString(

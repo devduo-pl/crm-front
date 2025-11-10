@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FormField } from "@/components/atoms/FormField";
+import { Input } from "@/components/ui/input";
 import type { User } from "@/types/user";
 
 export interface UserFormData {
@@ -16,18 +16,24 @@ interface UserFormProps {
   isLoading?: boolean;
 }
 
-const createFormData = (user?: User): UserFormData => ({
-  firstName: user?.firstName || "",
-  lastName: user?.lastName || "",
-  email: user?.email || "",
-});
-
 export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
-  const [formData, setFormData] = useState<UserFormData>(() => createFormData(user));
+  const [formData, setFormData] = useState<UserFormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+
   const [errors, setErrors] = useState<Partial<UserFormData>>({});
 
+  // Populate form when editing
   useEffect(() => {
-    setFormData(createFormData(user));
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+      });
+    }
   }, [user]);
 
   const validateForm = (): boolean => {
@@ -70,38 +76,68 @@ export function UserForm({ user, onSubmit, isLoading = false }: UserFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <FormField
-        id="firstName"
-        label="First Name *"
-        type="text"
-        value={formData.firstName}
-        onChange={(e) => handleInputChange("firstName", e.target.value)}
-        disabled={isLoading}
-        placeholder="Enter first name"
-        error={errors.firstName}
-      />
+      <div>
+        <label
+          htmlFor="firstName"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          First Name *
+        </label>
+        <Input
+          id="firstName"
+          type="text"
+          value={formData.firstName}
+          onChange={(e) => handleInputChange("firstName", e.target.value)}
+          disabled={isLoading}
+          className={errors.firstName ? "border-red-500" : ""}
+          placeholder="Enter first name"
+        />
+        {errors.firstName && (
+          <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+        )}
+      </div>
 
-      <FormField
-        id="lastName"
-        label="Last Name *"
-        type="text"
-        value={formData.lastName}
-        onChange={(e) => handleInputChange("lastName", e.target.value)}
-        disabled={isLoading}
-        placeholder="Enter last name"
-        error={errors.lastName}
-      />
+      <div>
+        <label
+          htmlFor="lastName"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Last Name *
+        </label>
+        <Input
+          id="lastName"
+          type="text"
+          value={formData.lastName}
+          onChange={(e) => handleInputChange("lastName", e.target.value)}
+          disabled={isLoading}
+          className={errors.lastName ? "border-red-500" : ""}
+          placeholder="Enter last name"
+        />
+        {errors.lastName && (
+          <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+        )}
+      </div>
 
-      <FormField
-        id="email"
-        label="Email *"
-        type="email"
-        value={formData.email}
-        onChange={(e) => handleInputChange("email", e.target.value)}
-        disabled={isLoading}
-        placeholder="Enter email address"
-        error={errors.email}
-      />
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Email *
+        </label>
+        <Input
+          id="email"
+          type="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange("email", e.target.value)}
+          disabled={isLoading}
+          className={errors.email ? "border-red-500" : ""}
+          placeholder="Enter email address"
+        />
+        {errors.email && (
+          <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+        )}
+      </div>
 
       <button type="submit" className="hidden" />
     </form>

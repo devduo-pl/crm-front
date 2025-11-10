@@ -20,11 +20,6 @@ export function Sidebar() {
       icon: <Icons.Users />,
     },
     {
-      name: "Companies",
-      href: "/companies",
-      icon: <Icons.Companies />,
-    },
-    {
       name: "Roles",
       href: "/roles",
       icon: <Icons.Shield />,

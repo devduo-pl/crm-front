@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FormField } from "@/components/atoms/FormField";
+import { Input } from "@/components/ui/input";
 import type { Role } from "@/services/roles";
 
 export interface RoleFormData {
@@ -15,17 +15,21 @@ interface RoleFormProps {
   isLoading?: boolean;
 }
 
-const createFormData = (role?: Role): RoleFormData => ({
-  name: role?.name || "",
-  description: role?.description || "",
-});
-
 export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
-  const [formData, setFormData] = useState<RoleFormData>(() => createFormData(role));
+  const [formData, setFormData] = useState<RoleFormData>({
+    name: "",
+    description: "",
+  });
+
   const [errors, setErrors] = useState<Partial<RoleFormData>>({});
 
   useEffect(() => {
-    setFormData(createFormData(role));
+    if (role) {
+      setFormData({
+        name: role.name || "",
+        description: role.description || "",
+      });
+    }
   }, [role]);
 
   const validateForm = (): boolean => {
@@ -66,16 +70,26 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <FormField
-        id="name"
-        label="Role Name *"
-        type="text"
-        value={formData.name}
-        onChange={(e) => handleInputChange("name", e.target.value)}
-        disabled={isLoading}
-        placeholder="Enter role name (e.g., Admin, Manager, User)"
-        error={errors.name}
-      />
+      <div>
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Role Name *
+        </label>
+        <Input
+          id="name"
+          type="text"
+          value={formData.name}
+          onChange={(e) => handleInputChange("name", e.target.value)}
+          disabled={isLoading}
+          className={errors.name ? "border-red-500" : ""}
+          placeholder="Enter role name (e.g., Admin, Manager, User)"
+        />
+        {errors.name && (
+          <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+        )}
+      </div>
 
       <div>
         <label
@@ -93,7 +107,7 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
             w-full px-3 py-2 border rounded-md shadow-sm text-sm
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
             disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-            ${errors.description ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-gray-300"}
+            ${errors.description ? "border-red-500" : "border-gray-300"}
           `}
           placeholder="Describe the role's responsibilities and permissions"
           rows={3}
