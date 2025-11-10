@@ -10,11 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
-import {
-  useAuthTranslations,
-  useCommonTranslations,
-  useFormsTranslations,
-} from "@/hooks/useTranslations";
 
 interface ResetPasswordCardProps {
   token: string;
@@ -27,21 +22,18 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
   const { resetPassword, isLoading } = useAuthStore();
   const { addAlert } = useAlert();
   const router = useRouter();
-  const tAuth = useAuthTranslations();
-  const tCommon = useCommonTranslations();
-  const tForms = useFormsTranslations();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (password !== confirmPassword) {
-      setError(tForms("passwordsDoNotMatch"));
+      setError("Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      setError(tAuth("passwordMustBe8Characters"));
+      setError("Password must be at least 8 characters long");
       return;
     }
 
@@ -49,8 +41,8 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
       await resetPassword(token, password);
       addAlert({
         type: "success",
-        title: tAuth("passwordResetSuccessfully"),
-        message: tAuth("passwordHasBeenReset"),
+        title: "Password reset successfully",
+        message: "Your password has been reset. You can now sign in with your new password.",
       });
       setTimeout(() => {
         router.push("/login");
@@ -59,7 +51,7 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError(tAuth("failedToResetPassword"));
+        setError("Failed to reset password. Please try again or request a new reset link.");
       }
     }
   };
@@ -67,31 +59,31 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{tAuth("resetYourPassword")}</CardTitle>
+        <CardTitle>Reset Your Password</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <FormField
               id="password"
-              label={tAuth("newPassword")}
+              label="New Password"
               type="password"
               autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={tAuth("enterNewPassword")}
+              placeholder="Enter your new password"
             />
 
             <FormField
               id="confirmPassword"
-              label={tAuth("confirmNewPassword")}
+              label="Confirm New Password"
               type="password"
               autoComplete="new-password"
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={tAuth("confirmYourNewPassword")}
+              placeholder="Confirm your new password"
             />
           </div>
 
@@ -100,11 +92,11 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
           <LoadingButton
             type="submit"
             isLoading={isLoading}
-            loadingText={tAuth("resettingPassword")}
+            loadingText="Resetting password..."
             className="w-full"
             size="lg"
           >
-            {tAuth("resetPassword")}
+            Reset Password
           </LoadingButton>
         </form>
 
@@ -115,14 +107,14 @@ export function ResetPasswordCard({ token }: ResetPasswordCardProps) {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500 rounded-full">
-                {tCommon("or")}
+                Or
               </span>
             </div>
           </div>
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/login">{tAuth("backToSignIn")}</Link>
+              <Link href="/login">Back to Sign In</Link>
             </Button>
           </div>
         </div>

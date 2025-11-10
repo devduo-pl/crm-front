@@ -21,9 +21,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="px-6 py-4">
             <div className="flex justify-between items-center">
               <UserMenu />
-              {/* Uncomment to add language switcher to dashboard header 
-              <DashboardLanguageSwitcher />
-              */}
             </div>
           </div>
         </header>

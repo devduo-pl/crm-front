@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
-import { ThemeScript } from "@/components/ThemeScript";
 import { Providers } from "@/providers/Providers";
+import { ThemeScript } from "@/components/ThemeScript";
 
 export default function RootLayout({
   children,
@@ -8,7 +8,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
+    <html lang="pl">
       <head>
         <ThemeScript />
       </head>

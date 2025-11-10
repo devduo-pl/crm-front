@@ -12,11 +12,11 @@ import { useAuthStore } from "@/store";
 import { useAuthRefresh } from "@/hooks/useAuthRefresh";
 import { Icons } from "@/components/atoms/Icons";
 import { useEffect } from "react";
-import { useDashboardTranslations } from "@/hooks/useTranslations";
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuthStore();
-  const tDashboard = useDashboardTranslations();
+
+  console.log(user);
 
   // This hook will automatically handle token refresh
   useAuthRefresh();
@@ -117,10 +117,10 @@ export default function DashboardPage() {
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                 <Icons.Check className="w-4 h-4 text-green-600" />
               </div>
-              {tDashboard('accountInformation')}
+              Account Information
             </CardTitle>
             <CardDescription>
-              {tDashboard('accountDetails')}
+              Your current account details and authentication status
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -128,7 +128,7 @@ export default function DashboardPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label className="text-sm font-medium text-gray-500">
-                    {tDashboard('userId')}
+                    User ID
                   </label>
                   <p className="text-sm text-gray-900 font-mono">{user.id}</p>
                 </div>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
                 {user.firstName && (
                   <div>
                     <label className="text-sm font-medium text-gray-500">
-                      {tDashboard('firstName')}
+                      First Name
                     </label>
                     <p className="text-sm text-gray-900">{user.firstName}</p>
                   </div>
@@ -149,14 +149,14 @@ export default function DashboardPage() {
                 {user.lastName && (
                   <div>
                     <label className="text-sm font-medium text-gray-500">
-                      {tDashboard('lastName')}
+                      Last Name
                     </label>
                     <p className="text-sm text-gray-900">{user.lastName}</p>
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-gray-500">{tDashboard('noUserInfo')}</p>
+              <p className="text-gray-500">No user information available</p>
             )}
           </CardContent>
         </Card>
@@ -167,39 +167,39 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {tDashboard('authenticationStatus')}
+              Authentication Status
             </CardTitle>
             <div className="w-4 h-4 bg-green-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{tDashboard('active')}</div>
-            <p className="text-xs text-gray-500">{tDashboard('successfullyAuthenticated')}</p>
+            <div className="text-2xl font-bold text-green-600">Active</div>
+            <p className="text-xs text-gray-500">Successfully authenticated</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {tDashboard('sessionStatus')}
+              Session Status
             </CardTitle>
             <Icons.Clock className="w-4 h-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{tDashboard('valid')}</div>
-            <p className="text-xs text-gray-500">{tDashboard('tokenIsActive')}</p>
+            <div className="text-2xl font-bold text-blue-600">Valid</div>
+            <p className="text-xs text-gray-500">Token is active</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tDashboard('accountType')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Account Type</CardTitle>
             <Icons.User className="w-4 h-4 text-purple-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
-              {user?.roles.includes("admin") ? tDashboard('admin') : tDashboard('user')}
+              {user?.roles.includes("admin") ? "Admin" : "User"}
             </div>
-            <p className="text-xs text-gray-500">{tDashboard('standardAccess')}</p>
+            <p className="text-xs text-gray-500">Standard access</p>
           </CardContent>
         </Card>
       </div>

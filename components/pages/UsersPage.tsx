@@ -21,11 +21,6 @@ import {
 } from "@/hooks/useUsers";
 import { useNotification } from "@/hooks/useNotification";
 import type { User } from "@/types/user";
-import {
-  useUsersTranslations,
-  useTableTranslations,
-  useCommonTranslations,
-} from "@/hooks/useTranslations";
 
 export function UsersPage() {
   const [page, setPage] = useState(1);
@@ -53,9 +48,6 @@ export function UsersPage() {
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const { showSuccess, showError } = useNotification();
-  const tUsers = useUsersTranslations();
-  const tTable = useTableTranslations();
-  const tCommon = useCommonTranslations();
 
   const users = usersResponse?.data || [];
   const pagination: PaginationInfo = {
@@ -68,7 +60,7 @@ export function UsersPage() {
   const columns: TableColumn<User>[] = [
     {
       key: "name",
-      header: tUsers("name"),
+      header: "Name",
       render: (_, row) => `${row.firstName} ${row.lastName}`,
       className: "font-medium",
     },
@@ -78,40 +70,40 @@ export function UsersPage() {
     },
     {
       key: "isActive",
-      header: tUsers("status"),
+      header: "Status",
       render: (value) => <StatusBadge status={value ? "active" : "inactive"} />,
     },
     {
       key: "roles",
-      header: tUsers("role"),
+      header: "Role",
       render: (value) => {
         const roles = value as string[];
         return roles && roles.length > 0
           ? roles.join(", ")
-          : tUsers("noRoleAssigned");
+          : "No role assigned";
       },
     },
     {
       key: "createdAt",
-      header: tUsers("created"),
+      header: "Created",
       render: (value) => new Date(value as string).toLocaleDateString(),
     },
   ];
 
   const actions: TableAction<User>[] = [
     {
-      label: tTable("edit"),
+      label: "Edit",
       onClick: handleEdit,
       variant: "outline",
     },
     {
-      label: tTable("ban"),
+      label: "Ban",
       onClick: (user) => handleBanConfirmation(user),
       variant: "destructive",
       condition: (user) => user.isActive,
     },
     {
-      label: tTable("unban"),
+      label: "Unban",
       onClick: (user) => handleUnbanConfirmation(user),
       variant: "default",
       condition: (user) => !user.isActive,
@@ -120,7 +112,7 @@ export function UsersPage() {
 
   const headerActions: PageHeaderAction[] = [
     {
-      label: tUsers("addUser"),
+      label: "Add User",
       onClick: handleAddUser,
       variant: "default",
     },
@@ -128,12 +120,12 @@ export function UsersPage() {
 
   const popupActions: PopupAction[] = [
     {
-      label: tCommon("cancel"),
+      label: "Cancel",
       onClick: handleClosePopup,
       variant: "outline",
     },
     {
-      label: editingUser ? tUsers("updateUser") : tUsers("createUser"),
+      label: editingUser ? "Update User" : "Create User",
       onClick: handleSaveUser,
       variant: "default",
       loading: createUserMutation.isPending || updateUserMutation.isPending,
@@ -174,8 +166,8 @@ export function UsersPage() {
           },
         });
         showSuccess(
-          tUsers("userUpdatedSuccess"),
-          `${formData.firstName} ${formData.lastName} ${tUsers("userUpdated")}`
+          "User Updated Successfully",
+          `${formData.firstName} ${formData.lastName} has been updated.`
         );
       } else {
         await createUserMutation.mutateAsync({
@@ -184,10 +176,8 @@ export function UsersPage() {
           email: formData.email,
         });
         showSuccess(
-          tUsers("userCreatedSuccess"),
-          `${formData.firstName} ${formData.lastName} ${tUsers(
-            "userAddedToSystem"
-          )}`
+          "User Created Successfully",
+          `${formData.firstName} ${formData.lastName} has been added to the system.`
         );
       }
 
@@ -195,10 +185,10 @@ export function UsersPage() {
     } catch (err) {
       console.error("Error saving user:", err);
       showError(
-        editingUser
-          ? tUsers("failedToUpdateUser")
-          : tUsers("failedToCreateUser"),
-        err instanceof Error ? err.message : tCommon("error")
+        editingUser ? "Failed to Update User" : "Failed to Create User",
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
       );
     }
   }
@@ -236,14 +226,14 @@ export function UsersPage() {
       if (confirmationDialog.type === "ban") {
         await banUserMutation.mutateAsync(confirmationDialog.user.id);
         showSuccess(
-          tUsers("userBannedSuccess"),
-          `${userName} ${tUsers("userBannedMessage")}`
+          "User Banned Successfully",
+          `${userName} has been banned and can no longer access the system.`
         );
       } else {
         await unbanUserMutation.mutateAsync(confirmationDialog.user.id);
         showSuccess(
-          tUsers("userUnbannedSuccess"),
-          `${userName} ${tUsers("userUnbannedMessage")}`
+          "User Unbanned Successfully",
+          `${userName} has been unbanned and can now access the system.`
         );
       }
 
@@ -251,10 +241,10 @@ export function UsersPage() {
     } catch (err) {
       console.error(`Error ${confirmationDialog.type}ning user:`, err);
       showError(
-        confirmationDialog.type === "ban"
-          ? tUsers("failedToBanUser")
-          : tUsers("failedToUnbanUser"),
-        err instanceof Error ? err.message : tCommon("error")
+        `Failed to ${confirmationDialog.type === "ban" ? "Ban" : "Unban"} User`,
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
       );
     }
   }
@@ -266,13 +256,13 @@ export function UsersPage() {
 
     if (confirmationDialog.type === "ban") {
       return {
-        title: tUsers("banUser"),
-        message: tUsers("banUserConfirm", { name: userName }),
+        title: "Ban User",
+        message: `Are you sure you want to ban ${userName}? This will prevent them from accessing the system.`,
       };
     } else {
       return {
-        title: tUsers("unbanUser"),
-        message: tUsers("unbanUserConfirm", { name: userName }),
+        title: "Unban User",
+        message: `Are you sure you want to unban ${userName}? This will restore their access to the system.`,
       };
     }
   };
@@ -282,18 +272,18 @@ export function UsersPage() {
   return (
     <>
       <DataTable<User>
-        title={tUsers("title")}
-        description={tUsers("description")}
+        title="Users"
+        description="Manage your team members and user accounts"
         headerActions={headerActions}
-        cardTitle={tUsers("allUsers")}
+        cardTitle="All Users"
         data={users}
         columns={columns}
         actions={actions}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}
-        emptyMessage={tUsers("noUsersFound")}
-        emptyDescription={tUsers("noUsersDescription")}
+        emptyMessage="No users found"
+        emptyDescription="There are no users to display."
         pagination={pagination}
         onPageChange={setPage}
       />
@@ -301,7 +291,7 @@ export function UsersPage() {
       <Popup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
-        title={editingUser ? tUsers("editUser") : tUsers("addNewUser")}
+        title={editingUser ? "Edit User" : "Add New User"}
         actions={popupActions}
         size="md"
       >
@@ -321,11 +311,9 @@ export function UsersPage() {
         message={confirmationContent.message}
         onConfirm={handleConfirmAction}
         confirmLabel={
-          confirmationDialog.type === "ban"
-            ? tUsers("banUser")
-            : tUsers("unbanUser")
+          confirmationDialog.type === "ban" ? "Ban User" : "Unban User"
         }
-        cancelLabel={tCommon("cancel")}
+        cancelLabel="Cancel"
         variant={confirmationDialog.type === "ban" ? "destructive" : "default"}
         isLoading={banUserMutation.isPending || unbanUserMutation.isPending}
       />

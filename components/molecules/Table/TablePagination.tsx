@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { PaginationInfo } from "./types";
-import { useTableTranslations } from "@/hooks/useTranslations";
 
 interface TablePaginationProps {
   pagination: PaginationInfo;
@@ -13,28 +12,19 @@ export function TablePagination({
   onPageChange,
   minItemsForPagination = 10,
 }: TablePaginationProps) {
-  const t = useTableTranslations();
   const hasEnoughItems = pagination.total >= minItemsForPagination;
   const canGoPrevious = pagination.page > 1;
   const canGoNext = pagination.page < pagination.totalPages;
 
-  const getPaginationText = () => {
-    if (pagination.total === 0) {
-      return t("noItemsToDisplay");
-    }
-    if (pagination.totalPages <= 1) {
-      return t("showingAll", { total: pagination.total });
-    }
-    return t("showingPage", {
-      page: pagination.page,
-      totalPages: pagination.totalPages,
-      total: pagination.total,
-    });
-  };
-
   return (
     <div className="flex items-center justify-between mt-6">
-      <div className="text-sm text-gray-700">{getPaginationText()}</div>
+      <div className="text-sm text-gray-700">
+        {pagination.total === 0
+          ? "No items to display"
+          : pagination.totalPages <= 1
+          ? `Showing all ${pagination.total} items`
+          : `Showing page ${pagination.page} of ${pagination.totalPages} (${pagination.total} total items)`}
+      </div>
       <div className="flex space-x-2">
         <Button
           variant="outline"
@@ -42,7 +32,7 @@ export function TablePagination({
           onClick={() => onPageChange(pagination.page - 1)}
           disabled={!hasEnoughItems || !canGoPrevious}
         >
-          {t("previous")}
+          Previous
         </Button>
         <Button
           variant="outline"
@@ -50,7 +40,7 @@ export function TablePagination({
           onClick={() => onPageChange(pagination.page + 1)}
           disabled={!hasEnoughItems || !canGoNext}
         >
-          {t("next")}
+          Next
         </Button>
       </div>
     </div>

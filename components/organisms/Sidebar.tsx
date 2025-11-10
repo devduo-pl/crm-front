@@ -4,30 +4,28 @@ import { usePathname } from "next/navigation";
 import { NavItem } from "@/components/atoms/NavItem";
 import { NavSection } from "@/components/atoms/NavSection";
 import { Icons } from "@/components/atoms/Icons";
-import { useNavigationTranslations } from "@/hooks/useTranslations";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const t = useNavigationTranslations();
 
   const navigation = [
     {
-      name: t("dashboard"),
+      name: "Dashboard",
       href: "/dashboard",
       icon: <Icons.Dashboard />,
     },
     {
-      name: t("users"),
+      name: "Users",
       href: "/users",
       icon: <Icons.Users />,
     },
     {
-      name: t("companies"),
+      name: "Companies",
       href: "/companies",
       icon: <Icons.Companies />,
     },
     {
-      name: t("roles"),
+      name: "Roles",
       href: "/roles",
       icon: <Icons.Shield />,
     },
@@ -53,7 +51,7 @@ export function Sidebar() {
       <div className="flex-1 flex flex-col overflow-y-auto">
         <nav className="flex-1 px-2 py-4 space-y-8">
           {/* Main Navigation */}
-          <NavSection title={t("main")}>
+          <NavSection title="Main">
             {navigation.map((item) => (
               <NavItem
                 key={item.name}
@@ -74,7 +72,7 @@ export function Sidebar() {
             icon={<Icons.Settings />}
             isActive={pathname === "/settings"}
           >
-            {t("settings")}
+            Settings
           </NavItem>
         </div>
       </div>

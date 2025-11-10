@@ -11,30 +11,15 @@ import {
 import { Popup, PopupAction } from "@/components/molecules/Popup";
 import { ConfirmationDialog } from "@/components/molecules/ConfirmationDialog";
 import { StatusBadge } from "@/components/atoms/StatusBadge";
-import {
-  CompanyForm,
-  CompanyFormData,
-} from "@/components/organisms/CompanyForm";
-import {
-  useCompanies,
-  useCreateCompany,
-  useUpdateCompany,
-  useDeleteCompany,
-} from "@/hooks/useCompanies";
+import { CompanyForm, CompanyFormData } from "@/components/organisms/CompanyForm";
+import { useCompanies, useCreateCompany, useUpdateCompany, useDeleteCompany } from "@/hooks/useCompanies";
 import { useNotification } from "@/hooks/useNotification";
-import {
-  useCompaniesTranslations,
-  useTableTranslations,
-  useCommonTranslations,
-} from "@/hooks/useTranslations";
 import type { Company } from "@/types/company";
 
 export function CompaniesPage() {
   const [page, setPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [editingCompany, setEditingCompany] = useState<Company | undefined>(
-    undefined
-  );
+  const [editingCompany, setEditingCompany] = useState<Company | undefined>(undefined);
   const [confirmationDialog, setConfirmationDialog] = useState<{
     isOpen: boolean;
     company: Company | undefined;
@@ -42,10 +27,6 @@ export function CompaniesPage() {
     isOpen: false,
     company: undefined,
   });
-
-  const t = useCompaniesTranslations();
-  const tableT = useTableTranslations();
-  const commonT = useCommonTranslations();
 
   const {
     data: companiesResponse,
@@ -70,51 +51,49 @@ export function CompaniesPage() {
   const columns: TableColumn<Company>[] = [
     {
       key: "name",
-      header: t("companyName"),
+      header: "Company Name",
       className: "font-medium",
     },
     {
       key: "nip",
-      header: t("nip"),
+      header: "NIP",
       render: (value) => (value as string) || "—",
     },
     {
       key: "industry",
-      header: t("industry"),
+      header: "Industry",
       render: (value) => (value as string) || "—",
     },
     {
       key: "status",
-      header: tableT("status"),
-      render: (value) => (
-        <StatusBadge status={value as "active" | "inactive"} />
-      ),
+      header: "Status",
+      render: (value) => <StatusBadge status={value as "active" | "inactive"} />,
     },
     {
       key: "city",
-      header: t("city"),
+      header: "City",
       render: (value) => (value as string) || "—",
     },
     {
       key: "employeeCount",
-      header: t("employees"),
-      render: (value) => (value ? (value as number).toString() : "—"),
+      header: "Employees",
+      render: (value) => value ? (value as number).toString() : "—",
     },
     {
       key: "createdAt",
-      header: tableT("created"),
+      header: "Created",
       render: (value) => new Date(value as string).toLocaleDateString(),
     },
   ];
 
   const actions: TableAction<Company>[] = [
     {
-      label: tableT("edit"),
+      label: "Edit",
       onClick: handleEdit,
       variant: "outline",
     },
     {
-      label: tableT("delete"),
+      label: "Delete",
       onClick: (company) => handleDeleteConfirmation(company),
       variant: "destructive",
     },
@@ -122,7 +101,7 @@ export function CompaniesPage() {
 
   const headerActions: PageHeaderAction[] = [
     {
-      label: t("addCompany"),
+      label: "Add Company",
       onClick: handleAddCompany,
       variant: "default",
     },
@@ -130,16 +109,15 @@ export function CompaniesPage() {
 
   const popupActions: PopupAction[] = [
     {
-      label: commonT("cancel"),
+      label: "Cancel",
       onClick: handleClosePopup,
       variant: "outline",
     },
     {
-      label: editingCompany ? t("updateCompany") : t("createCompany"),
+      label: editingCompany ? "Update Company" : "Create Company",
       onClick: handleSaveCompany,
       variant: "default",
-      loading:
-        createCompanyMutation.isPending || updateCompanyMutation.isPending,
+      loading: createCompanyMutation.isPending || updateCompanyMutation.isPending,
     },
   ];
 
@@ -168,14 +146,12 @@ export function CompaniesPage() {
   // Helper function to ensure numeric fields are properly converted
   const transformFormData = (formData: CompanyFormData): CompanyFormData => ({
     ...formData,
-    annualRevenue:
-      typeof formData.annualRevenue === "string"
-        ? parseFloat(formData.annualRevenue) || 0
-        : formData.annualRevenue,
-    employeeCount:
-      typeof formData.employeeCount === "string"
-        ? parseInt(formData.employeeCount) || 0
-        : formData.employeeCount,
+    annualRevenue: typeof formData.annualRevenue === 'string' 
+      ? parseFloat(formData.annualRevenue) || 0 
+      : formData.annualRevenue,
+    employeeCount: typeof formData.employeeCount === 'string' 
+      ? parseInt(formData.employeeCount) || 0 
+      : formData.employeeCount,
   });
 
   async function handleFormSubmit(formData: CompanyFormData) {
@@ -189,14 +165,14 @@ export function CompaniesPage() {
           data: transformedData,
         });
         showSuccess(
-          t("companyUpdatedSuccess"),
-          `${formData.name} ${t("companyUpdated")}`
+          "Company Updated Successfully",
+          `${formData.name} has been updated.`
         );
       } else {
         await createCompanyMutation.mutateAsync(transformedData);
         showSuccess(
-          t("companyCreatedSuccess"),
-          `${formData.name} ${t("companyAddedToSystem")}`
+          "Company Created Successfully",
+          `${formData.name} has been added to the system.`
         );
       }
 
@@ -204,9 +180,7 @@ export function CompaniesPage() {
     } catch (err) {
       console.error("Error saving company:", err);
       showError(
-        editingCompany
-          ? t("failedToUpdateCompany")
-          : t("failedToCreateCompany"),
+        editingCompany ? "Failed to Update Company" : "Failed to Create Company",
         err instanceof Error
           ? err.message
           : "An unexpected error occurred. Please try again."
@@ -236,15 +210,15 @@ export function CompaniesPage() {
     try {
       await deleteCompanyMutation.mutateAsync(confirmationDialog.company.id);
       showSuccess(
-        t("companyDeletedSuccess"),
-        `${companyName} ${t("companyRemovedFromSystem")}`
+        "Company Deleted Successfully",
+        `${companyName} has been removed from the system.`
       );
 
       handleCloseConfirmation();
     } catch (err) {
       console.error("Error deleting company:", err);
       showError(
-        t("failedToDeleteCompany"),
+        "Failed to Delete Company",
         err instanceof Error
           ? err.message
           : "An unexpected error occurred. Please try again."
@@ -258,8 +232,8 @@ export function CompaniesPage() {
     const companyName = confirmationDialog.company.name;
 
     return {
-      title: t("deleteCompany"),
-      message: t("deleteCompanyConfirm", { name: companyName }),
+      title: "Delete Company",
+      message: `Are you sure you want to delete "${companyName}"? This action cannot be undone and will permanently remove all company data.`,
     };
   };
 
@@ -268,18 +242,18 @@ export function CompaniesPage() {
   return (
     <>
       <DataTable<Company>
-        title={t("title")}
-        description={t("description")}
+        title="Companies"
+        description="Manage your company database"
         headerActions={headerActions}
-        cardTitle={t("allCompanies")}
+        cardTitle="All Companies"
         data={companies}
         columns={columns}
         actions={actions}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}
-        emptyMessage={t("noCompaniesFound")}
-        emptyDescription={t("noCompaniesDescription")}
+        emptyMessage="No companies found"
+        emptyDescription="There are no companies to display."
         pagination={pagination}
         onPageChange={setPage}
       />
@@ -287,11 +261,14 @@ export function CompaniesPage() {
       <Popup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
-        title={editingCompany ? t("editCompany") : t("addNewCompany")}
+        title={editingCompany ? "Edit Company" : "Add New Company"}
         actions={popupActions}
         size="lg"
       >
-        <CompanyForm initialData={editingCompany} onSubmit={handleFormSubmit} />
+        <CompanyForm
+          initialData={editingCompany}
+          onSubmit={handleFormSubmit}
+        />
       </Popup>
 
       <ConfirmationDialog
@@ -300,8 +277,8 @@ export function CompaniesPage() {
         title={confirmationContent.title}
         message={confirmationContent.message}
         onConfirm={handleConfirmDelete}
-        confirmLabel={t("deleteCompany")}
-        cancelLabel={commonT("cancel")}
+        confirmLabel="Delete Company"
+        cancelLabel="Cancel"
         variant="destructive"
         isLoading={deleteCompanyMutation.isPending}
       />

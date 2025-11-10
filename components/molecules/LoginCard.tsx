@@ -9,10 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { LoadingButton } from "@/components/atoms/LoadingButton";
-import {
-  useAuthTranslations,
-  useCommonTranslations,
-} from "@/hooks/useTranslations";
 
 export function LoginCard() {
   const [email, setEmail] = useState("");
@@ -20,8 +16,6 @@ export function LoginCard() {
   const [error, setError] = useState("");
   const { login, isLoading } = useAuthStore();
   const router = useRouter();
-  const tAuth = useAuthTranslations();
-  const tCommon = useCommonTranslations();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +28,7 @@ export function LoginCard() {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError(tAuth("loginFailed"));
+        setError("Login failed. Please try again.");
       }
     }
   };
@@ -42,31 +36,31 @@ export function LoginCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{tAuth('signIn')}</CardTitle>
+        <CardTitle>Sign In</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             <FormField
               id="email"
-              label={tAuth('emailAddress')}
+              label="Email address"
               type="email"
               autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={tAuth('enterEmail')}
+              placeholder="Enter your email"
             />
 
             <FormField
               id="password"
-              label={tAuth('password')}
+              label="Password"
               type="password"
               autoComplete="current-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={tAuth('enterPassword')}
+              placeholder="Enter your password"
             />
           </div>
 
@@ -75,11 +69,11 @@ export function LoginCard() {
           <LoadingButton
             type="submit"
             isLoading={isLoading}
-            loadingText={tAuth('signingIn')}
+            loadingText="Signing in..."
             className="w-full"
             size="lg"
           >
-            {tAuth('signInButton')}
+            Sign in
           </LoadingButton>
         </form>
 
@@ -90,14 +84,14 @@ export function LoginCard() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500 rounded-full">
-                {tCommon('or')}
+                Or
               </span>
             </div>
           </div>
 
           <div className="mt-6 flex flex-col gap-3">
             <Button variant="ghost" asChild className="w-full">
-              <Link href="/forgot-password">{tAuth('forgotPasswordQuestion')}</Link>
+              <Link href="/forgot-password">Forgot your password?</Link>
             </Button>
           </div>
         </div>

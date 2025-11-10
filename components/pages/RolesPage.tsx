@@ -17,11 +17,6 @@ import {
   useDeleteRole,
 } from "@/hooks/useRoles";
 import { useNotification } from "@/hooks/useNotification";
-import {
-  useRolesTranslations,
-  useTableTranslations,
-  useCommonTranslations,
-} from "@/hooks/useTranslations";
 import type { Role } from "@/services/roles";
 
 export function RolesPage() {
@@ -35,10 +30,6 @@ export function RolesPage() {
     role: undefined,
   });
 
-  const t = useRolesTranslations();
-  const tableT = useTableTranslations();
-  const commonT = useCommonTranslations();
-
   const { data: roles = [], isLoading, error, refetch } = useRoles();
 
   const createRoleMutation = useCreateRole();
@@ -49,12 +40,12 @@ export function RolesPage() {
   const columns: TableColumn<Role>[] = [
     {
       key: "name",
-      header: t("roleName"),
+      header: "Role Name",
       className: "font-medium",
     },
     {
       key: "description",
-      header: t("descriptionColumn"),
+      header: "Description",
       render: (value) => (
         <span className="text-gray-600 max-w-md truncate block">
           {value as string}
@@ -63,24 +54,24 @@ export function RolesPage() {
     },
     {
       key: "createdAt",
-      header: tableT("created"),
+      header: "Created",
       render: (value) => new Date(value as string).toLocaleDateString(),
     },
     {
       key: "updatedAt",
-      header: t("lastUpdated"),
+      header: "Last Updated",
       render: (value) => new Date(value as string).toLocaleDateString(),
     },
   ];
 
   const actions: TableAction<Role>[] = [
     {
-      label: tableT("edit"),
+      label: "Edit",
       onClick: handleEdit,
       variant: "outline",
     },
     {
-      label: tableT("delete"),
+      label: "Delete",
       onClick: (role) => handleDeleteConfirmation(role),
       variant: "destructive",
     },
@@ -88,7 +79,7 @@ export function RolesPage() {
 
   const headerActions: PageHeaderAction[] = [
     {
-      label: t("addRole"),
+      label: "Add Role",
       onClick: handleAddRole,
       variant: "default",
     },
@@ -96,12 +87,12 @@ export function RolesPage() {
 
   const popupActions: PopupAction[] = [
     {
-      label: commonT("cancel"),
+      label: "Cancel",
       onClick: handleClosePopup,
       variant: "outline",
     },
     {
-      label: editingRole ? t("updateRole") : t("createRole"),
+      label: editingRole ? "Update Role" : "Create Role",
       onClick: handleSaveRole,
       variant: "default",
       loading: createRoleMutation.isPending || updateRoleMutation.isPending,
@@ -141,8 +132,8 @@ export function RolesPage() {
           },
         });
         showSuccess(
-          t("roleUpdatedSuccess"),
-          `${formData.name} ${t("roleUpdated")}`
+          "Role Updated Successfully",
+          `${formData.name} has been updated.`
         );
       } else {
         await createRoleMutation.mutateAsync({
@@ -150,8 +141,8 @@ export function RolesPage() {
           description: formData.description,
         });
         showSuccess(
-          t("roleCreatedSuccess"),
-          `${formData.name} ${t("roleAddedToSystem")}`
+          "Role Created Successfully",
+          `${formData.name} has been added to the system.`
         );
       }
 
@@ -159,7 +150,7 @@ export function RolesPage() {
     } catch (err) {
       console.error("Error saving role:", err);
       showError(
-        editingRole ? t("failedToUpdateRole") : t("failedToCreateRole"),
+        editingRole ? "Failed to Update Role" : "Failed to Create Role",
         err instanceof Error
           ? err.message
           : "An unexpected error occurred. Please try again."
@@ -189,15 +180,15 @@ export function RolesPage() {
     try {
       await deleteRoleMutation.mutateAsync(confirmationDialog.role.id);
       showSuccess(
-        t("roleDeletedSuccess"),
-        `${roleName} ${t("roleRemovedFromSystem")}`
+        "Role Deleted Successfully",
+        `${roleName} has been removed from the system.`
       );
 
       handleCloseConfirmation();
     } catch (err) {
       console.error("Error deleting role:", err);
       showError(
-        t("failedToDeleteRole"),
+        "Failed to Delete Role",
         err instanceof Error
           ? err.message
           : "An unexpected error occurred. Please try again."
@@ -211,8 +202,8 @@ export function RolesPage() {
     const roleName = confirmationDialog.role.name;
 
     return {
-      title: t("deleteRole"),
-      message: t("deleteRoleConfirm", { name: roleName }),
+      title: "Delete Role",
+      message: `Are you sure you want to delete the "${roleName}" role? This action cannot be undone and may affect users assigned to this role.`,
     };
   };
 
@@ -221,24 +212,24 @@ export function RolesPage() {
   return (
     <>
       <DataTable<Role>
-        title={t("title")}
-        description={t("description")}
+        title="Roles"
+        description="Manage user roles and permissions"
         headerActions={headerActions}
-        cardTitle={t("allRoles")}
+        cardTitle="All Roles"
         data={roles}
         columns={columns}
         actions={actions}
         isLoading={isLoading}
         error={error}
         onRetry={refetch}
-        emptyMessage={t("noRolesFound")}
-        emptyDescription={t("noRolesDescription")}
+        emptyMessage="No roles found"
+        emptyDescription="There are no roles to display. Create your first role to get started."
       />
 
       <Popup
         isOpen={isPopupOpen}
         onClose={handleClosePopup}
-        title={editingRole ? t("editRole") : t("addNewRole")}
+        title={editingRole ? "Edit Role" : "Add New Role"}
         actions={popupActions}
         size="md"
       >
@@ -257,8 +248,8 @@ export function RolesPage() {
         title={confirmationContent.title}
         message={confirmationContent.message}
         onConfirm={handleConfirmDelete}
-        confirmLabel={t("deleteRole")}
-        cancelLabel={commonT("cancel")}
+        confirmLabel="Delete Role"
+        cancelLabel="Cancel"
         variant="destructive"
         isLoading={deleteRoleMutation.isPending}
       />
