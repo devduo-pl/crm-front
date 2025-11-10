@@ -1,0 +1,1 @@
+export { RoleAssignmentPopup } from "./RoleAssignmentPopup";

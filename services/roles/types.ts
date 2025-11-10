@@ -26,6 +26,10 @@ export interface AssignRoleRequest {
   roleId: number;
 }
 
+export interface ChangeUserRoleRequest {
+  roleId: number;
+}
+
 export interface UpdateUserRolesRequest {
   roleIds: number[];
 } 
