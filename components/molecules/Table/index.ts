@@ -9,9 +9,6 @@ export { TableErrorState } from "./TableErrorState";
 export { TableEmptyState } from "./TableEmptyState";
 export { TablePagination } from "./TablePagination";
 export { TableActionsDropdown } from "./TableActionsDropdown";
-export { SortableTableHeader } from "./SortableTableHeader";
-export { GlobalSearch } from "./GlobalSearch";
-export { TableFilters } from "./TableFilters";
 
 // Types
 export type {
@@ -20,8 +17,6 @@ export type {
   PaginationInfo,
   PageHeaderAction,
   TableProps,
-  SortState,
-  SortDirection,
 } from "./types";
 
 // Legacy export for backward compatibility

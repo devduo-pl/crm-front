@@ -7,7 +7,6 @@ export interface User {
   roles: string[];
   createdAt: string;
   updatedAt: string;
-  [key: string]: unknown;
 }
 
 export interface UserCreateData {

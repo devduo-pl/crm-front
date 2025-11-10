@@ -110,12 +110,6 @@ export const Icons = {
     </svg>
   ),
 
-  Search: ({ className = "w-4 h-4" }: IconProps = {}) => (
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-  ),
-
   Logout: ({ className = "w-4 h-4" }: IconProps = {}) => (
     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -128,25 +122,6 @@ export const Icons = {
       <circle cx="12" cy="6" r="1.5" fill="currentColor" />
       <circle cx="12" cy="12" r="1.5" fill="currentColor" />
       <circle cx="12" cy="18" r="1.5" fill="currentColor" />
-    </svg>
-  ),
-
-  // Sorting icons
-  ChevronUp: ({ className = "w-4 h-4" }: IconProps = {}) => (
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-    </svg>
-  ),
-
-  ChevronDown: ({ className = "w-4 h-4" }: IconProps = {}) => (
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-    </svg>
-  ),
-
-  ChevronsUpDown: ({ className = "w-4 h-4" }: IconProps = {}) => (
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 15l5 5 5-5M7 9l5-5 5 5" />
     </svg>
   ),
 

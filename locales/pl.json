@@ -170,10 +170,7 @@
     "next": "Następna",
     "noDataFound": "Nie znaleziono danych",
     "created": "Utworzono",
-    "status": "Status",
-    "search": "Szukaj",
-    "searchEverything": "Szukaj we wszystkich polach...",
-    "clearSearch": "Wyczyść wyszukiwanie"
+    "status": "Status"
   },
   "dashboard": {
     "accountInformation": "Informacje o koncie",

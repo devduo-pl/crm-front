@@ -6,10 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TableColumn, TableAction, SortState, SortDirection } from "./types";
+import { TableColumn, TableAction } from "./types";
 import { TableEmptyState } from "./TableEmptyState";
 import { TableActionsDropdown } from "./TableActionsDropdown";
-import { SortableTableHeader } from "./SortableTableHeader";
 import { useTranslations } from "next-intl";
 
 interface TableContentProps<T = Record<string, unknown>> {
@@ -18,9 +17,6 @@ interface TableContentProps<T = Record<string, unknown>> {
   actions?: TableAction<T>[];
   emptyMessage?: string;
   emptyDescription?: string;
-  sortable?: boolean;
-  sortState?: SortState;
-  onSortChange?: (column: string, direction: SortDirection) => void;
 }
 
 export function TableContent<T = Record<string, unknown>>({
@@ -29,9 +25,6 @@ export function TableContent<T = Record<string, unknown>>({
   actions = [],
   emptyMessage,
   emptyDescription,
-  sortable = false,
-  sortState,
-  onSortChange,
 }: TableContentProps<T>) {
   const t = useTranslations("table");
   const hasActions = actions.length > 0;
@@ -44,13 +37,9 @@ export function TableContent<T = Record<string, unknown>>({
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <SortableTableHeader
-                  key={column.key}
-                  column={column}
-                  sortState={sortState}
-                  onSortChange={onSortChange}
-                  globalSortable={sortable}
-                />
+                <TableHead key={column.key} className={column.className}>
+                  {column.header}
+                </TableHead>
               ))}
               {hasActions && (
                 <TableHead className="text-right w-[50px]">{t("actions")}</TableHead>
@@ -79,13 +68,9 @@ export function TableContent<T = Record<string, unknown>>({
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
-              <SortableTableHeader
-                key={column.key}
-                column={column}
-                sortState={sortState}
-                onSortChange={onSortChange}
-                globalSortable={sortable}
-              />
+              <TableHead key={column.key} className={column.className}>
+                {column.header}
+              </TableHead>
             ))}
             {hasActions && (
               <TableHead className="text-right w-[50px]">{t("actions")}</TableHead>

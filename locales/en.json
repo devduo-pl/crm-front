@@ -170,10 +170,7 @@
     "next": "Next",
     "noDataFound": "No data found",
     "created": "Created",
-    "status": "Status",
-    "search": "Search",
-    "searchEverything": "Search in all fields...",
-    "clearSearch": "Clear search"
+    "status": "Status"
   },
   "dashboard": {
     "accountInformation": "Account Information",

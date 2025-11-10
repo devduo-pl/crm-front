@@ -42,7 +42,6 @@ export interface Company {
   contactsCount: number;
   notesCount: number;
   tagsCount: number;
-  [key: string]: unknown;
 }
 
 export interface CompaniesQueryParams {
