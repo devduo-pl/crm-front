@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { fetchApiServer, fetchApiServerDelete, buildQueryString } from "@/lib/api-server";
+import { fetchApiServer, buildQueryString } from "@/lib/api-server";
 import type {
   User,
   UserCreateData,
@@ -9,6 +9,18 @@ import type {
   UsersQueryParams,
   PaginatedResponse,
 } from "@/types/user";
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === "string" && error.length > 0) {
+    return error;
+  }
+
+  return fallback;
+};
 
 /**
  * Get all users with filtering and pagination
@@ -23,10 +35,10 @@ export async function getUsersAction(params: UsersQueryParams = {}) {
       `/users${queryString}`
     );
     return { success: true, data };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to fetch users",
+      error: getErrorMessage(error, "Failed to fetch users"),
       data: null,
     };
   }
@@ -39,10 +51,10 @@ export async function getUserAction(id: number) {
   try {
     const data = await fetchApiServer<User>(`/users/${id}`);
     return { success: true, data };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to fetch user",
+      error: getErrorMessage(error, "Failed to fetch user"),
       data: null,
     };
   }
@@ -62,10 +74,10 @@ export async function createUserAction(userData: UserCreateData) {
     revalidatePath("/[locale]/(dashboard)/users");
 
     return { success: true, data };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to create user",
+      error: getErrorMessage(error, "Failed to create user"),
       data: null,
     };
   }
@@ -86,10 +98,10 @@ export async function updateUserAction(id: number, userData: UserUpdateData) {
     revalidatePath(`/[locale]/(dashboard)/users/${id}`);
 
     return { success: true, data };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to update user",
+      error: getErrorMessage(error, "Failed to update user"),
       data: null,
     };
   }
@@ -107,10 +119,10 @@ export async function banUserAction(id: number) {
     revalidatePath("/[locale]/(dashboard)/users");
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to ban user",
+      error: getErrorMessage(error, "Failed to ban user"),
     };
   }
 }
@@ -127,11 +139,10 @@ export async function unbanUserAction(id: number) {
     revalidatePath("/[locale]/(dashboard)/users");
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to unban user",
+      error: getErrorMessage(error, "Failed to unban user"),
     };
   }
 }
-

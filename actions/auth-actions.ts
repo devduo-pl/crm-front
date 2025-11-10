@@ -1,9 +1,20 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { fetchApiServer } from "@/lib/api-server";
 import type { LoginResponse, RegisterUserData } from "@/services/auth/types";
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === "string" && error.length > 0) {
+    return error;
+  }
+
+  return fallback;
+};
 
 /**
  * Server Action for login
@@ -25,10 +36,10 @@ export async function loginAction(
       success: true,
       user: response.user,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Login failed",
+      error: getErrorMessage(error, "Login failed"),
     };
   }
 }
@@ -48,7 +59,7 @@ export async function logoutAction() {
     cookieStore.delete("refresh_token");
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Clear cookies even if server request fails
     const cookieStore = await cookies();
     cookieStore.delete("access_token");
@@ -56,7 +67,7 @@ export async function logoutAction() {
 
     return {
       success: false,
-      error: error.message || "Logout failed",
+      error: getErrorMessage(error, "Logout failed"),
     };
   }
 }
@@ -75,10 +86,10 @@ export async function registerAction(userData: RegisterUserData) {
       success: true,
       user: response.user,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Registration failed",
+      error: getErrorMessage(error, "Registration failed"),
     };
   }
 }
@@ -96,10 +107,10 @@ export async function forgotPasswordAction(email: string) {
     return {
       success: true,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to send reset email",
+      error: getErrorMessage(error, "Failed to send reset email"),
     };
   }
 }
@@ -117,10 +128,10 @@ export async function resetPasswordAction(token: string, password: string) {
     return {
       success: true,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      error: error.message || "Failed to reset password",
+      error: getErrorMessage(error, "Failed to reset password"),
     };
   }
 }
@@ -136,4 +147,3 @@ export async function getCurrentUser() {
     return null;
   }
 }
-
