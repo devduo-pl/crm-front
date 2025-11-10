@@ -30,11 +30,7 @@ interface AuthState {
   isLoading: boolean;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
-  login: (
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
   checkAuth: () => Promise<void>;
@@ -52,14 +48,10 @@ export const useAuthStore = create<AuthState>()(
         setUser: (user) => set({ user }),
         setLoading: (loading) => set({ isLoading: loading }),
 
-        login: async (email: string, password: string, rememberMe: boolean) => {
+        login: async (email: string, password: string) => {
           set({ isLoading: true });
           try {
-            const response = await authService.login({
-              email,
-              password,
-              rememberMe,
-            });
+            const response = await authService.login({ email, password });
             set({ user: response.user, isLoading: false });
           } catch (error) {
             set({ isLoading: false });
