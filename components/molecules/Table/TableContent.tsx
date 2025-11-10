@@ -6,10 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { TableColumn, TableAction } from "./types";
 import { TableEmptyState } from "./TableEmptyState";
-import { TableActionsDropdown } from "./TableActionsDropdown";
-import { useTranslations } from "next-intl";
+import { useTableTranslations } from "@/hooks/useTranslations";
 
 interface TableContentProps<T = Record<string, unknown>> {
   data: T[];
@@ -26,7 +26,7 @@ export function TableContent<T = Record<string, unknown>>({
   emptyMessage,
   emptyDescription,
 }: TableContentProps<T>) {
-  const t = useTranslations("table");
+  const t = useTableTranslations();
   const hasActions = actions.length > 0;
 
   // Empty state
@@ -42,7 +42,7 @@ export function TableContent<T = Record<string, unknown>>({
                 </TableHead>
               ))}
               {hasActions && (
-                <TableHead className="text-right w-[50px]">{t("actions")}</TableHead>
+                <TableHead className="text-right">{t("actions")}</TableHead>
               )}
             </TableRow>
           </TableHeader>
@@ -73,7 +73,7 @@ export function TableContent<T = Record<string, unknown>>({
               </TableHead>
             ))}
             {hasActions && (
-              <TableHead className="text-right w-[50px]">{t("actions")}</TableHead>
+              <TableHead className="text-right">{t("actions")}</TableHead>
             )}
           </TableRow>
         </TableHeader>
@@ -94,7 +94,22 @@ export function TableContent<T = Record<string, unknown>>({
               ))}
               {hasActions && (
                 <TableCell className="text-right">
-                  <TableActionsDropdown actions={actions} row={row} />
+                  <div className="flex justify-end space-x-2">
+                    {actions
+                      .filter(
+                        (action) => !action.condition || action.condition(row)
+                      )
+                      .map((action, actionIndex) => (
+                        <Button
+                          key={actionIndex}
+                          variant={action.variant || "outline"}
+                          size={action.size || "sm"}
+                          onClick={() => action.onClick(row)}
+                        >
+                          {action.label}
+                        </Button>
+                      ))}
+                  </div>
                 </TableCell>
               )}
             </TableRow>

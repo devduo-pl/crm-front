@@ -32,7 +32,7 @@ export function TableLoadingState<T = Record<string, unknown>>({
               </TableHead>
             ))}
             {hasActions && (
-              <TableHead className="text-right w-[50px]">Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             )}
           </TableRow>
         </TableHeader>
@@ -46,7 +46,14 @@ export function TableLoadingState<T = Record<string, unknown>>({
               ))}
               {hasActions && (
                 <TableCell className="text-right">
-                  <div className="h-8 w-8 bg-gray-200 rounded animate-pulse ml-auto"></div>
+                  <div className="flex justify-end space-x-2">
+                    {actions.map((_, actionIndex) => (
+                      <div
+                        key={actionIndex}
+                        className="h-8 w-16 bg-gray-200 rounded animate-pulse"
+                      ></div>
+                    ))}
+                  </div>
                 </TableCell>
               )}
             </TableRow>
