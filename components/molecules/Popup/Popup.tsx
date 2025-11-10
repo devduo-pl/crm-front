@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { PopupProps } from "./types";
 import { PopupHeader } from "./PopupHeader";
 import { PopupFooter } from "./PopupFooter";
@@ -12,10 +12,9 @@ export function Popup({
   children,
   actions = [],
   size = "md",
+  closeOnOverlayClick = true,
   closeOnEscape = true,
 }: PopupProps) {
-  const contentRef = useRef<HTMLDivElement>(null);
-
   // Handle escape key
   useEffect(() => {
     if (!closeOnEscape || !isOpen) return;
@@ -54,10 +53,18 @@ export function Popup({
     full: "max-w-7xl",
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (closeOnOverlayClick && e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      onClick={handleOverlayClick}
+    >
       <div
-        ref={contentRef}
         className={`
           w-full ${sizeClasses[size]} max-h-[90vh] 
           bg-white rounded-lg shadow-xl 

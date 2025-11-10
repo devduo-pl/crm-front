@@ -26,5 +26,6 @@ export interface PopupProps {
   size?: "sm" | "md" | "lg" | "xl" | "full";
   
   // Behavior
+  closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
 } 
