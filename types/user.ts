@@ -5,6 +5,7 @@ export interface User {
   email: string;
   isActive: boolean;
   roles: string[];
+  permissions?: string[]; // Array of permission keys from all assigned roles
   createdAt: string;
   updatedAt: string;
   [key: string]: unknown;

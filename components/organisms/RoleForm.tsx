@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { FormField } from "@/components/atoms/FormField";
+import { MultiSelect } from "@/components/atoms/MultiSelect";
 import { useFormsTranslations } from "@/hooks/useTranslations";
+import { usePermissions } from "@/hooks/usePermissions";
 import type { Role } from "@/services/roles";
 
 export interface RoleFormData {
   name: string;
   description: string;
+  permissionIds?: number[];
 }
 
 interface RoleFormProps {
@@ -19,6 +22,7 @@ interface RoleFormProps {
 const createFormData = (role?: Role): RoleFormData => ({
   name: role?.name || "",
   description: role?.description || "",
+  permissionIds: [],
 });
 
 export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
@@ -26,11 +30,24 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
     createFormData(role)
   );
   const [errors, setErrors] = useState<Partial<RoleFormData>>({});
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const t = useFormsTranslations();
+  const { data: permissions = [], isLoading: isLoadingPermissions } =
+    usePermissions();
 
   useEffect(() => {
     setFormData(createFormData(role));
-  }, [role]);
+    // Set selected permissions based on role
+    if (role && role.permissions) {
+      // Find permission IDs from permission names (backend uses 'name' as key)
+      const selectedIds = permissions
+        .filter((p) => role.permissions?.includes(p.name))
+        .map((p) => p.id.toString());
+      setSelectedPermissions(selectedIds);
+    } else {
+      setSelectedPermissions([]);
+    }
+  }, [role, permissions]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<RoleFormData> = {};
@@ -55,7 +72,12 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
     e.preventDefault();
 
     if (validateForm()) {
-      onSubmit(formData);
+      // Convert selected permission IDs to numbers
+      const permissionIds = selectedPermissions.map((id) => parseInt(id, 10));
+      onSubmit({
+        ...formData,
+        permissionIds,
+      });
     }
   };
 
@@ -67,6 +89,17 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
+
+  const handlePermissionsChange = (selected: string[]) => {
+    setSelectedPermissions(selected);
+  };
+
+  // Convert permissions to multi-select options
+  const permissionOptions = permissions.map((permission) => ({
+    value: permission.id.toString(),
+    label: permission.name, // Backend uses 'name' as the permission key
+    description: permission.description,
+  }));
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -110,6 +143,17 @@ export function RoleForm({ role, onSubmit, isLoading = false }: RoleFormProps) {
           <p className="mt-1 text-sm text-red-600">{errors.description}</p>
         )}
       </div>
+
+      <MultiSelect
+        id="permissions"
+        label={t("role.permissions")}
+        options={permissionOptions}
+        value={selectedPermissions}
+        onChange={handlePermissionsChange}
+        placeholder={t("role.selectPermissions")}
+        searchPlaceholder={t("role.selectPermissions")}
+        disabled={isLoading || isLoadingPermissions}
+      />
 
       <button type="submit" className="hidden" />
     </form>

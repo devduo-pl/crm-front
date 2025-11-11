@@ -74,7 +74,7 @@ export function UserMenu() {
         <span className="hidden sm:inline">
           {isLoggingOut ? t("signingOut") : t("signOut")}
         </span>
-      </Button>{" "}
+      </Button>
       <DashboardLanguageSwitcher />
     </div>
   );

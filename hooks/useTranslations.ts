@@ -306,6 +306,10 @@ export function useRolesTranslations() {
   return useNextIntlTranslations("roles");
 }
 
+export function usePermissionsTranslations() {
+  return useNextIntlTranslations("permissions");
+}
+
 // General hook that can be used with any namespace
 export function useTranslations(namespace?: keyof TranslationKeys) {
   return useNextIntlTranslations(namespace);

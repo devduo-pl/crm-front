@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/atoms/Icons";
 import { useNavigationTranslations } from "@/hooks/useTranslations";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
   SidebarContent,
@@ -17,32 +18,65 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  permission?: string; // Permission required to view this item
+}
+
 export function AppSidebar() {
   const pathname = usePathname();
   const t = useNavigationTranslations();
+  const { hasPermission } = useAuth();
 
-  const navigation = [
+  const navigation: NavigationItem[] = [
     {
       name: t("dashboard"),
       href: "/dashboard",
       icon: <Icons.Dashboard />,
+      permission: "view_dashboard",
     },
     {
       name: t("users"),
       href: "/users",
       icon: <Icons.Users />,
+      permission: "view_users",
     },
     {
       name: t("companies"),
       href: "/companies",
       icon: <Icons.Companies />,
+      permission: "view_companies",
     },
     {
       name: t("roles"),
       href: "/roles",
       icon: <Icons.Shield />,
+      permission: "manage_roles",
+    },
+    {
+      name: t("permissions"),
+      href: "/permissions",
+      icon: <Icons.Shield />,
+      permission: "manage_permissions",
     },
   ];
+
+  // Check if user has full navigation access
+  const hasFullNavAccess = hasPermission("full_nav_access");
+
+  // Filter navigation items based on permissions
+  const filteredNavigation = navigation.filter((item) => {
+    // If user has full_nav_access, show all items
+    if (hasFullNavAccess) return true;
+    
+    // If no permission is required, show the item
+    if (!item.permission) return true;
+    
+    // Otherwise, check if user has the required permission
+    return hasPermission(item.permission);
+  });
 
   return (
     <Sidebar>
@@ -55,7 +89,7 @@ export function AppSidebar() {
               </div>
             </div>
             <div className="ml-3">
-              <p className="text-white text-lg font-semibold">DevDuo CRM</p>
+              <p className="text-lg font-semibold">DevDuo CRM</p>
             </div>
           </div>
         </div>
@@ -66,7 +100,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>{t("main")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => (
+              {filteredNavigation.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
                     <Link href={item.href}>

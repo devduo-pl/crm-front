@@ -24,9 +24,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <SidebarTrigger className="-ml-1" />
             <div className="ml-auto">
               <UserMenu />
-              {/* Uncomment to add language switcher to dashboard header 
-              <DashboardLanguageSwitcher />
-              */}
             </div>
           </div>
         </header>

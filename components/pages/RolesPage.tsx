@@ -140,6 +140,19 @@ export function RolesPage() {
             description: formData.description,
           },
         });
+
+        // Update permissions if provided
+        // Note: This requires the backend to support permission assignment
+        // If your backend doesn't support this yet, you'll need to implement it
+        // or remove this section
+        if (formData.permissionIds && formData.permissionIds.length > 0) {
+          // TODO: Implement permission update via API
+          // await updateRolePermissionsMutation.mutateAsync({
+          //   roleId: editingRole.id,
+          //   permissionIds: formData.permissionIds,
+          // });
+        }
+
         showSuccess(
           t("roleUpdatedSuccess"),
           `${formData.name} ${t("roleUpdated")}`
@@ -149,6 +162,12 @@ export function RolesPage() {
           name: formData.name,
           description: formData.description,
         });
+
+        // Note: To assign permissions during creation, you may need to:
+        // 1. Create the role first (as above)
+        // 2. Then assign permissions to it
+        // This depends on your backend API design
+
         showSuccess(
           t("roleCreatedSuccess"),
           `${formData.name} ${t("roleAddedToSystem")}`

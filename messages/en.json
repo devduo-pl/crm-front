@@ -66,6 +66,7 @@
     "users": "Users",
     "companies": "Companies",
     "roles": "Roles",
+    "permissions": "Permissions",
     "settings": "Settings",
     "main": "Main",
     "signOut": "Sign Out",
@@ -143,12 +144,28 @@
     "role": {
       "roleName": "Role Name",
       "description": "Description",
+      "permissions": "Permissions",
       "enterRoleName": "Enter role name (e.g., Admin, Manager, User)",
       "enterDescription": "Describe the role's responsibilities and permissions",
       "roleNameRequired": "Role name is required",
       "roleNameMinLength": "Role name must be at least 2 characters",
       "descriptionRequired": "Description is required",
-      "descriptionMinLength": "Description must be at least 5 characters"
+      "descriptionMinLength": "Description must be at least 5 characters",
+      "selectPermissions": "Select the permissions for this role",
+      "noPermissionsSelected": "No permissions selected"
+    },
+    "permission": {
+      "permissionKey": "Permission Key",
+      "permissionName": "Permission Name",
+      "description": "Description",
+      "enterPermissionKey": "Enter permission key (e.g., view_users, manage_roles)",
+      "enterPermissionName": "Enter permission name",
+      "enterDescription": "Describe what this permission allows",
+      "permissionKeyRequired": "Permission key is required",
+      "permissionKeyMinLength": "Permission key must be at least 3 characters",
+      "permissionKeyPattern": "Permission key must be lowercase with underscores (e.g., view_users)",
+      "permissionNameRequired": "Permission name is required",
+      "descriptionRequired": "Description is required"
     }
   },
   "table": {
@@ -290,5 +307,40 @@
     "deleteRoleConfirm": "Are you sure you want to delete the \"{name}\" role? This action cannot be undone and may affect users assigned to this role.",
     "noRolesFound": "No roles found",
     "noRolesDescription": "There are no roles to display. Create your first role to get started."
+  },
+  "permissions": {
+    "title": "Permissions",
+    "description": "Manage system permissions",
+    "allPermissions": "All Permissions",
+    "addPermission": "Add Permission",
+    "editPermission": "Edit Permission",
+    "addNewPermission": "Add New Permission",
+    "updatePermission": "Update Permission",
+    "createPermission": "Create Permission",
+    "deletePermission": "Delete Permission",
+    "permissionKey": "Permission Key",
+    "permissionName": "Permission Name",
+    "permissionDescription": "Description",
+    "permissionCreatedSuccess": "Permission Created Successfully",
+    "permissionUpdatedSuccess": "Permission Updated Successfully",
+    "permissionDeletedSuccess": "Permission Deleted Successfully",
+    "failedToCreatePermission": "Failed to Create Permission",
+    "failedToUpdatePermission": "Failed to Update Permission",
+    "failedToDeletePermission": "Failed to Delete Permission",
+    "permissionAddedToSystem": "has been added to the system.",
+    "permissionUpdated": "has been updated.",
+    "permissionRemovedFromSystem": "has been removed from the system.",
+    "deletePermissionConfirm": "Are you sure you want to delete the \"{name}\" permission? This action cannot be undone.",
+    "noPermissionsFound": "No permissions found",
+    "noPermissionsDescription": "There are no permissions to display.",
+    "selectPermissions": "Select Permissions",
+    "assignedPermissions": "Assigned Permissions",
+    "noPermissionsAssigned": "No permissions assigned",
+    "searchPermissions": "Search permissions...",
+    "permissionsFor": "Permissions for",
+    "unauthorized": "Unauthorized",
+    "unauthorizedMessage": "You do not have permission to access this resource.",
+    "insufficientPermissions": "Insufficient Permissions",
+    "insufficientPermissionsMessage": "You need the following permission(s) to access this: {permissions}"
   }
 }

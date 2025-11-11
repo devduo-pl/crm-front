@@ -2,6 +2,7 @@ export interface Role {
   id: number;
   name: string;
   description: string;
+  permissions?: string[]; // Array of permission keys
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
