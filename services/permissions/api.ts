@@ -3,7 +3,6 @@ import type {
   Permission,
   PermissionCreateData,
   PermissionUpdateData,
-  UpdateRolePermissionsRequest,
 } from "./types";
 
 export const permissionsService = {
@@ -67,9 +66,8 @@ export const permissionsService = {
     roleId: number,
     permissionId: number
   ): Promise<void> => {
-    return fetchApi<void>(`/roles/${roleId}/permissions`, {
+    return fetchApi<void>(`/roles/${roleId}/permissions/${permissionId}`, {
       method: "POST",
-      body: JSON.stringify({ permissionId }),
     });
   },
 
@@ -87,14 +85,39 @@ export const permissionsService = {
 
   /**
    * Update role permissions (replace all)
+   * This makes multiple POST requests to assign each permission individually
    */
   updateRolePermissions: async (
     roleId: number,
     permissionIds: number[]
   ): Promise<void> => {
-    return fetchApi<void>(`/roles/${roleId}/permissions`, {
-      method: "PUT",
-      body: JSON.stringify({ permissionIds } as UpdateRolePermissionsRequest),
-    });
+    // First, get current permissions to determine what to remove
+    const currentPermissions = await permissionsService.getRolePermissions(
+      roleId
+    );
+    const currentPermissionIds = currentPermissions.map((p) => p.id);
+
+    // Remove permissions that are no longer selected
+    const permissionsToRemove = currentPermissionIds.filter(
+      (id) => !permissionIds.includes(id)
+    );
+    for (const permissionId of permissionsToRemove) {
+      await permissionsService.removePermissionFromRole(roleId, permissionId);
+    }
+
+    // Add new permissions
+    const permissionsToAdd = permissionIds.filter(
+      (id) => !currentPermissionIds.includes(id)
+    );
+    for (const permissionId of permissionsToAdd) {
+      try {
+        await permissionsService.assignPermissionToRole(roleId, permissionId);
+      } catch (err) {
+        // Ignore 400 errors (permission already exists)
+        if (err instanceof Error && !err.message.includes("400")) {
+          throw err;
+        }
+      }
+    }
   },
 };

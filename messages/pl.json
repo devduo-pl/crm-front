@@ -66,6 +66,7 @@
     "users": "Użytkownicy",
     "companies": "Firmy",
     "roles": "Role",
+    "permissions": "Uprawnienia",
     "settings": "Ustawienia",
     "main": "Główne",
     "signOut": "Wyloguj",
@@ -143,12 +144,28 @@
     "role": {
       "roleName": "Nazwa roli",
       "description": "Opis",
+      "permissions": "Uprawnienia",
       "enterRoleName": "Wprowadź nazwę roli (np. Administrator, Kierownik, Użytkownik)",
       "enterDescription": "Opisz obowiązki i uprawnienia roli",
       "roleNameRequired": "Nazwa roli jest wymagana",
       "roleNameMinLength": "Nazwa roli musi mieć co najmniej 2 znaki",
       "descriptionRequired": "Opis jest wymagany",
-      "descriptionMinLength": "Opis musi mieć co najmniej 5 znaków"
+      "descriptionMinLength": "Opis musi mieć co najmniej 5 znaków",
+      "selectPermissions": "Wybierz uprawnienia dla tej roli",
+      "noPermissionsSelected": "Nie wybrano uprawnień"
+    },
+    "permission": {
+      "permissionKey": "Klucz uprawnienia",
+      "permissionName": "Nazwa uprawnienia",
+      "description": "Opis",
+      "enterPermissionKey": "Wprowadź klucz uprawnienia (np. view_users, manage_roles)",
+      "enterPermissionName": "Wprowadź nazwę uprawnienia",
+      "enterDescription": "Opisz, co to uprawnienie umożliwia",
+      "permissionKeyRequired": "Klucz uprawnienia jest wymagany",
+      "permissionKeyMinLength": "Klucz uprawnienia musi mieć co najmniej 3 znaki",
+      "permissionKeyPattern": "Klucz uprawnienia musi być pisany małymi literami z podkreśleniami (np. view_users)",
+      "permissionNameRequired": "Nazwa uprawnienia jest wymagana",
+      "descriptionRequired": "Opis jest wymagany"
     }
   },
   "table": {
@@ -290,5 +307,40 @@
     "deleteRoleConfirm": "Czy na pewno chcesz usunąć rolę \"{name}\"? Ta akcja nie może być cofnięta i może wpłynąć na użytkowników przypisanych do tej roli.",
     "noRolesFound": "Nie znaleziono ról",
     "noRolesDescription": "Brak ról do wyświetlenia. Utwórz swoją pierwszą rolę, aby rozpocząć."
+  },
+  "permissions": {
+    "title": "Uprawnienia",
+    "description": "Zarządzaj uprawnieniami systemowymi",
+    "allPermissions": "Wszystkie uprawnienia",
+    "addPermission": "Dodaj uprawnienie",
+    "editPermission": "Edytuj uprawnienie",
+    "addNewPermission": "Dodaj nowe uprawnienie",
+    "updatePermission": "Aktualizuj uprawnienie",
+    "createPermission": "Utwórz uprawnienie",
+    "deletePermission": "Usuń uprawnienie",
+    "permissionKey": "Klucz uprawnienia",
+    "permissionName": "Nazwa uprawnienia",
+    "permissionDescription": "Opis",
+    "permissionCreatedSuccess": "Uprawnienie utworzone pomyślnie",
+    "permissionUpdatedSuccess": "Uprawnienie zaktualizowane pomyślnie",
+    "permissionDeletedSuccess": "Uprawnienie usunięte pomyślnie",
+    "failedToCreatePermission": "Nie udało się utworzyć uprawnienia",
+    "failedToUpdatePermission": "Nie udało się zaktualizować uprawnienia",
+    "failedToDeletePermission": "Nie udało się usunąć uprawnienia",
+    "permissionAddedToSystem": "zostało dodane do systemu.",
+    "permissionUpdated": "zostało zaktualizowane.",
+    "permissionRemovedFromSystem": "zostało usunięte z systemu.",
+    "deletePermissionConfirm": "Czy na pewno chcesz usunąć uprawnienie \"{name}\"? Ta akcja nie może być cofnięta.",
+    "noPermissionsFound": "Nie znaleziono uprawnień",
+    "noPermissionsDescription": "Brak uprawnień do wyświetlenia.",
+    "selectPermissions": "Wybierz uprawnienia",
+    "assignedPermissions": "Przypisane uprawnienia",
+    "noPermissionsAssigned": "Nie przypisano uprawnień",
+    "searchPermissions": "Szukaj uprawnień...",
+    "permissionsFor": "Uprawnienia dla",
+    "unauthorized": "Brak autoryzacji",
+    "unauthorizedMessage": "Nie masz uprawnień do dostępu do tego zasobu.",
+    "insufficientPermissions": "Niewystarczające uprawnienia",
+    "insufficientPermissionsMessage": "Potrzebujesz następujących uprawnień, aby uzyskać dostęp: {permissions}"
   }
 }

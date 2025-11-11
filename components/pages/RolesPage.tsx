@@ -16,6 +16,10 @@ import {
   useUpdateRole,
   useDeleteRole,
 } from "@/hooks/useRoles";
+import {
+  useUpdateRolePermissions,
+  useRolePermissions,
+} from "@/hooks/usePermissions";
 import { useNotification } from "@/hooks/useNotification";
 import {
   useRolesTranslations,
@@ -41,9 +45,14 @@ export function RolesPage() {
 
   const { data: roles = [], isLoading, error, refetch } = useRoles();
 
+  // Fetch permissions for the role being edited
+  const { data: rolePermissions = [], isLoading: isLoadingRolePermissions } =
+    useRolePermissions(editingRole?.id || 0);
+
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
   const deleteRoleMutation = useDeleteRole();
+  const updateRolePermissionsMutation = useUpdateRolePermissions();
   const { showSuccess, showError } = useNotification();
 
   const columns: TableColumn<Role>[] = [
@@ -104,7 +113,10 @@ export function RolesPage() {
       label: editingRole ? t("updateRole") : t("createRole"),
       onClick: handleSaveRole,
       variant: "default",
-      loading: createRoleMutation.isPending || updateRoleMutation.isPending,
+      loading:
+        createRoleMutation.isPending ||
+        updateRoleMutation.isPending ||
+        updateRolePermissionsMutation.isPending,
     },
   ];
 
@@ -132,7 +144,10 @@ export function RolesPage() {
 
   async function handleFormSubmit(formData: RoleFormData) {
     try {
+      let roleId: number;
+
       if (editingRole) {
+        // Update existing role
         await updateRoleMutation.mutateAsync({
           id: editingRole.id,
           data: {
@@ -140,39 +155,30 @@ export function RolesPage() {
             description: formData.description,
           },
         });
-
-        // Update permissions if provided
-        // Note: This requires the backend to support permission assignment
-        // If your backend doesn't support this yet, you'll need to implement it
-        // or remove this section
-        if (formData.permissionIds && formData.permissionIds.length > 0) {
-          // TODO: Implement permission update via API
-          // await updateRolePermissionsMutation.mutateAsync({
-          //   roleId: editingRole.id,
-          //   permissionIds: formData.permissionIds,
-          // });
-        }
-
-        showSuccess(
-          t("roleUpdatedSuccess"),
-          `${formData.name} ${t("roleUpdated")}`
-        );
+        roleId = editingRole.id;
       } else {
-        await createRoleMutation.mutateAsync({
+        // Create new role
+        const newRole = await createRoleMutation.mutateAsync({
           name: formData.name,
           description: formData.description,
         });
-
-        // Note: To assign permissions during creation, you may need to:
-        // 1. Create the role first (as above)
-        // 2. Then assign permissions to it
-        // This depends on your backend API design
-
-        showSuccess(
-          t("roleCreatedSuccess"),
-          `${formData.name} ${t("roleAddedToSystem")}`
-        );
+        roleId = newRole.id;
       }
+
+      // Update permissions (both for create and update)
+      if (formData.permissionIds) {
+        await updateRolePermissionsMutation.mutateAsync({
+          roleId,
+          permissionIds: formData.permissionIds,
+        });
+      }
+
+      showSuccess(
+        editingRole ? t("roleUpdatedSuccess") : t("roleCreatedSuccess"),
+        `${formData.name} ${
+          editingRole ? t("roleUpdated") : t("roleAddedToSystem")
+        }`
+      );
 
       handleClosePopup();
     } catch (err) {
@@ -262,10 +268,21 @@ export function RolesPage() {
         size="md"
       >
         <RoleForm
-          role={editingRole}
+          role={
+            editingRole
+              ? {
+                  ...editingRole,
+                  // Add fetched permissions to the role object
+                  permissions: rolePermissions.map((p) => p.name),
+                }
+              : undefined
+          }
           onSubmit={handleFormSubmit}
           isLoading={
-            createRoleMutation.isPending || updateRoleMutation.isPending
+            createRoleMutation.isPending ||
+            updateRoleMutation.isPending ||
+            updateRolePermissionsMutation.isPending ||
+            isLoadingRolePermissions
           }
         />
       </Popup>
