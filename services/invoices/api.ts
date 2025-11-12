@@ -97,5 +97,6 @@ export const invoicesService = {
     );
     return fetchApi<PaginatedInvoicesResponse>(`/companies/${companyId}/invoices${queryString}`);
   },
+
 };
 

@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/atoms/StatusBadge";
 import { Popup, PopupAction } from "@/components/molecules/Popup";
 import { FormField } from "@/components/atoms/FormField";
 import { useState } from "react";
+import { generateInvoicePdf } from "@/lib/invoice-pdf";
 import type { RecordPaymentData, PaymentMethod } from "@/types/invoice";
 
 interface InvoiceViewPageProps {
@@ -22,6 +23,7 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
   const t = useTranslations("invoices");
   const commonT = useTranslations("common");
   const [isPaymentPopupOpen, setIsPaymentPopupOpen] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [paymentData, setPaymentData] = useState<RecordPaymentData>({
     paymentDate: new Date().toISOString().split('T')[0],
     amount: 0,
@@ -40,6 +42,32 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
 
   const getPaymentStatusVariant = (status: string): "active" | "inactive" => {
     return status === "PAID" ? "active" : "inactive";
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!invoice) return;
+
+    setIsDownloadingPdf(true);
+    try {
+      const blob = await generateInvoicePdf(invoice);
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${invoice.invoiceNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showSuccess(t("pdfDownloadSuccess"), invoice.invoiceNumber);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      const errorMessage = error instanceof Error ? error.message : t("pdfDownloadError");
+      showError(t("pdfDownloadError"), errorMessage);
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   const handleRecordPayment = async () => {
@@ -109,6 +137,13 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
               variant="outline"
             >
               {commonT("back")}
+            </Button>
+            <Button
+              onClick={handleDownloadPdf}
+              variant="outline"
+              disabled={isDownloadingPdf}
+            >
+              {isDownloadingPdf ? t("downloadingPdf") : t("downloadPdf")}
             </Button>
             {invoice.paymentStatus !== "PAID" && (
               <Button onClick={() => setIsPaymentPopupOpen(true)}>

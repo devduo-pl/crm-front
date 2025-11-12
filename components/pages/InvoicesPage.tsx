@@ -19,10 +19,13 @@ import { useTableSorting } from "@/hooks/useTableSorting";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { useNotification } from "@/hooks/useNotification";
 import { useTranslations } from "next-intl";
+import { invoicesService } from "@/services/invoices";
+import { generateInvoicePdf } from "@/lib/invoice-pdf";
 import type { Invoice } from "@/types/invoice";
 
 export function InvoicesPage() {
   const [page, setPage] = useState(1);
+  const [downloadingPdfId, setDownloadingPdfId] = useState<string | null>(null);
   const [confirmationDialog, setConfirmationDialog] = useState<{
     isOpen: boolean;
     invoice: Invoice | undefined;
@@ -125,11 +128,46 @@ export function InvoicesPage() {
     },
   ];
 
+  const handleDownloadPdf = async (invoice: Invoice) => {
+    setDownloadingPdfId(invoice.id);
+    try {
+      const detailedInvoice = await invoicesService.getInvoice(
+        invoice.id,
+        "seller,buyer,items,payments,taxSummaries"
+      );
+
+      const blob = await generateInvoicePdf(detailedInvoice);
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${invoice.invoiceNumber}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showSuccess(t("pdfDownloadSuccess"), invoice.invoiceNumber);
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+      const errorMessage = error instanceof Error ? error.message : t("pdfDownloadError");
+      showError(t("pdfDownloadError"), errorMessage);
+    } finally {
+      setDownloadingPdfId(null);
+    }
+  };
+
   const actions: TableAction<Invoice>[] = [
     {
       label: t("viewInvoice"),
       onClick: (invoice) => router.push(`/invoices/${invoice.id}`),
       variant: "outline",
+    },
+    {
+      label: t("downloadPdf"),
+      onClick: handleDownloadPdf,
+      variant: "outline",
+      loading: (invoice) => downloadingPdfId === invoice.id,
     },
     {
       label: tableT("delete"),

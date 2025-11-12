@@ -23,7 +23,6 @@ export async function fetchApiServer<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
-  console.log("[Server API] Fetching:", url);
 
   // Get cookies from the request
   const cookieStore = await cookies();

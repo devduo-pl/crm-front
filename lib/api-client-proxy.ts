@@ -50,8 +50,6 @@ export async function fetchApiProxy<T>(
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
   const url = `${PROXY_BASE_URL}/${cleanEndpoint}`;
 
-  console.log("API Call URL (via proxy):", url);
-
   // Prepare headers
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -76,8 +74,6 @@ export async function fetchApiProxyDelete(
 ): Promise<void> {
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
   const url = `${PROXY_BASE_URL}/${cleanEndpoint}`;
-
-  console.log("API Call URL (DELETE via proxy):", url);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -119,4 +115,3 @@ export function buildQueryString(
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : "";
 }
-

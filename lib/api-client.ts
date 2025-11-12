@@ -20,12 +20,6 @@ export class ApiError extends Error {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
-  // Log response headers and cookies for debugging
-  console.log(
-    "Response headers:",
-    Object.fromEntries(response.headers.entries())
-  );
-  console.log("Set-Cookie header:", response.headers.get("set-cookie"));
 
   if (!response.ok) {
     const error = await response
@@ -39,7 +33,6 @@ async function handleResponse<T>(response: Response): Promise<T> {
   }
 
   const data = await response.json();
-  console.log("Response data:", data);
   return data;
 }
 
@@ -48,7 +41,6 @@ export async function fetchApi<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
-  console.log("API Call URL:", url);
 
   // Prepare headers
   const headers: Record<string, string> = {
@@ -70,7 +62,6 @@ export async function fetchApiDelete(
   options: RequestInit = {}
 ): Promise<void> {
   const url = `${BASE_URL}${endpoint}`;
-  console.log("API Call URL (DELETE):", url);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

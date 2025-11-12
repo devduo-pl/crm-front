@@ -45,8 +45,6 @@ async function handler(
       }
     }
 
-    console.log(`[API Proxy] ${request.method} /${path}`);
-
     // Forward request to backend
     const backendResponse = await fetch(url, {
       method: request.method,

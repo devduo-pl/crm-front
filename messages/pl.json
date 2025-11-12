@@ -455,6 +455,10 @@
     "customVatRate": "Wprowadź własną stawkę VAT",
     "customUnit": "Wprowadź własną jednostkę",
     "vatExemptionReason": "Podstawa zwolnienia z VAT",
-    "enterVatExemptionReason": "Wprowadź podstawę zwolnienia (wymagane dla NP/ZW)"
+    "enterVatExemptionReason": "Wprowadź podstawę zwolnienia (wymagane dla NP/ZW)",
+    "downloadPdf": "Pobierz PDF",
+    "downloadingPdf": "Pobieranie...",
+    "pdfDownloadSuccess": "PDF pobrano pomyślnie",
+    "pdfDownloadError": "Nie udało się pobrać PDF"
   }
 }

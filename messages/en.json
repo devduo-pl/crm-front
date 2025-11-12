@@ -455,6 +455,10 @@
     "customVatRate": "Enter custom VAT rate",
     "customUnit": "Enter custom unit",
     "vatExemptionReason": "VAT Exemption Reason",
-    "enterVatExemptionReason": "Enter exemption reason (required for NP/ZW)"
+    "enterVatExemptionReason": "Enter exemption reason (required for NP/ZW)",
+    "downloadPdf": "Download PDF",
+    "downloadingPdf": "Downloading...",
+    "pdfDownloadSuccess": "PDF downloaded successfully",
+    "pdfDownloadError": "Failed to download PDF"
   }
 }
