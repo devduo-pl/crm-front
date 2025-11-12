@@ -148,13 +148,13 @@ export function PermissionsPage() {
         await updatePermissionMutation.mutateAsync({
           id: editingPermission.id,
           data: {
-            name: formData.name,
+            // Don't send 'name' field when updating - it's immutable
             description: formData.description,
           },
         });
         showSuccess(
           t("permissionUpdatedSuccess"),
-          `${formData.name} ${t("permissionUpdated")}`
+          `${editingPermission.name} ${t("permissionUpdated")}`
         );
       } else {
         await createPermissionMutation.mutateAsync({

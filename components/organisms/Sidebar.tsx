@@ -50,6 +50,12 @@ export function AppSidebar() {
       permission: "view_companies",
     },
     {
+      name: t("invoices"),
+      href: "/invoices",
+      icon: <Icons.Documents />,
+      permission: "view_invoices",
+    },
+    {
       name: t("roles"),
       href: "/roles",
       icon: <Icons.Shield />,
@@ -70,10 +76,10 @@ export function AppSidebar() {
   const filteredNavigation = navigation.filter((item) => {
     // If user has full_nav_access, show all items
     if (hasFullNavAccess) return true;
-    
+
     // If no permission is required, show the item
     if (!item.permission) return true;
-    
+
     // Otherwise, check if user has the required permission
     return hasPermission(item.permission);
   });
