@@ -65,10 +65,22 @@ async function handler(
       },
     });
 
-    // Forward Set-Cookie headers from backend to client
-    const setCookieHeader = backendResponse.headers.get("set-cookie");
-    if (setCookieHeader) {
-      response.headers.set("Set-Cookie", setCookieHeader);
+    // Forward all Set-Cookie headers from backend to client
+    // Note: The backend may send multiple Set-Cookie headers (access_token, refresh_token)
+    // We need to get them using the raw headers API
+    const setCookieHeaders = backendResponse.headers.getSetCookie?.() || [];
+    
+    if (setCookieHeaders.length > 0) {
+      // Append each Set-Cookie header separately
+      setCookieHeaders.forEach((cookie) => {
+        response.headers.append("Set-Cookie", cookie);
+      });
+    } else {
+      // Fallback for older Node versions that don't have getSetCookie
+      const setCookieHeader = backendResponse.headers.get("set-cookie");
+      if (setCookieHeader) {
+        response.headers.set("Set-Cookie", setCookieHeader);
+      }
     }
 
     return response;
