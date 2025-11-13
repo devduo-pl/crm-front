@@ -2,6 +2,7 @@ import { createElement } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@/types/user";
+import { normalizeUser } from "@/lib/normalizeUser";
 
 /**
  * Server-side function to get the current user from cookies
@@ -34,7 +35,7 @@ export async function getCurrentUserServer(): Promise<User | null> {
     }
 
     const data = await response.json();
-    return data.user;
+    return normalizeUser(data.user);
   } catch (error) {
     console.error("Error fetching current user:", error);
     return null;

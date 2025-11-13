@@ -1,4 +1,5 @@
 import { fetchApiProxy as fetchApi } from "@/lib/api-client-proxy";
+import { normalizeUser } from "@/lib/normalizeUser";
 import type {
   LoginCredentials,
   LoginResponse,
@@ -19,7 +20,12 @@ export const authService = {
       body: JSON.stringify(credentials),
     });
 
-    return response;
+    const normalizedUser = normalizeUser(response.user);
+
+    return {
+      ...response,
+      user: normalizedUser ?? response.user,
+    };
   },
 
   /**
@@ -65,7 +71,8 @@ export const authService = {
         },
         credentials: "include",
       });
-      return response.user;
+
+      return normalizeUser(response.user);
     } catch {
       return null;
     }
@@ -81,7 +88,12 @@ export const authService = {
       body: JSON.stringify(userData),
     });
 
-    return response;
+    const normalizedUser = normalizeUser(response.user);
+
+    return {
+      ...response,
+      user: normalizedUser ?? response.user,
+    };
   },
 
   /**
