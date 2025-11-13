@@ -10,6 +10,7 @@ import { formatCurrency, formatNumber } from "@/lib/number-utils";
 import { locales as supportedLocales } from "@/i18n/routing";
 
 const FONT_NAME = "Roboto";
+const FONT_ENCODING = "Identity-H";
 
 interface FontVariant {
   vfsName: string;
@@ -132,10 +133,10 @@ async function registerFonts(doc: jsPDF): Promise<string> {
       FONT_VARIANTS.map(async (variant) => {
         const base64 = await loadFontData(variant);
         doc.addFileToVFS(variant.vfsName, base64);
-        doc.addFont(variant.vfsName, FONT_NAME, variant.style);
+        doc.addFont(variant.vfsName, FONT_NAME, variant.style, FONT_ENCODING);
       })
     );
-    doc.setFont(FONT_NAME, "normal");
+    doc.setFont(FONT_NAME, "normal", FONT_ENCODING);
     return FONT_NAME;
   } catch (error) {
     console.error(

@@ -6,12 +6,12 @@ import { FormField } from "@/components/atoms/FormField";
 import { ErrorMessage } from "@/components/atoms/ErrorMessage";
 import { Button } from "@/components/ui/button";
 import { useCompanies } from "@/hooks/useCompanies";
-import type { 
-  InvoiceFormData, 
-  Invoice, 
-  InvoiceType, 
-  PaymentMethod, 
-  InvoiceItemInput 
+import type {
+  InvoiceFormData,
+  Invoice,
+  InvoiceType,
+  PaymentMethod,
+  InvoiceItemInput,
 } from "@/types/invoice";
 
 export interface InvoiceFormProps {
@@ -24,23 +24,33 @@ export { type InvoiceFormData };
 const createFormData = (initialData?: Partial<Invoice>): InvoiceFormData => ({
   invoiceNumber: initialData?.invoiceNumber || "",
   type: initialData?.type || "VAT",
-  issueDate: initialData?.issueDate?.split('T')[0] || new Date().toISOString().split('T')[0],
-  saleDate: initialData?.saleDate?.split('T')[0] || new Date().toISOString().split('T')[0],
-  dueDate: initialData?.dueDate?.split('T')[0] || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  issueDate:
+    initialData?.issueDate?.split("T")[0] ||
+    new Date().toISOString().split("T")[0],
+  saleDate:
+    initialData?.saleDate?.split("T")[0] ||
+    new Date().toISOString().split("T")[0],
+  dueDate:
+    initialData?.dueDate?.split("T")[0] ||
+    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
   currency: initialData?.currency || "PLN",
   exchangeRate: initialData?.exchangeRate || 1,
-  exchangeRateDate: initialData?.exchangeRateDate?.split('T')[0] || new Date().toISOString().split('T')[0],
+  exchangeRateDate:
+    initialData?.exchangeRateDate?.split("T")[0] ||
+    new Date().toISOString().split("T")[0],
   sellerId: initialData?.sellerId || 0,
   buyerId: initialData?.buyerId || 0,
   paymentMethod: initialData?.paymentMethod || "TRANSFER",
   notes: initialData?.notes || "",
-  items: initialData?.items || [{
-    description: "",
-    quantity: 1,
-    unit: "szt",
-    unitNetPrice: 0,
-    vatRate: 23,
-  }],
+  items: initialData?.items || [
+    {
+      description: "",
+      quantity: 1,
+      unit: "szt",
+      unitNetPrice: 0,
+      vatRate: 23,
+    },
+  ],
 });
 
 export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
@@ -48,7 +58,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
     createFormData(initialData)
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [customVatRates, setCustomVatRates] = useState<Record<number, boolean>>({});
+  const [customVatRates, setCustomVatRates] = useState<Record<number, boolean>>(
+    {}
+  );
   const [customUnits, setCustomUnits] = useState<Record<number, boolean>>({});
 
   const t = useTranslations("invoices");
@@ -69,7 +81,11 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
     }
   };
 
-  const handleItemChange = (index: number, field: keyof InvoiceItemInput, value: string | number) => {
+  const handleItemChange = (
+    index: number,
+    field: keyof InvoiceItemInput,
+    value: string | number
+  ) => {
     const updatedItems = [...formData.items];
     updatedItems[index] = {
       ...updatedItems[index],
@@ -79,27 +95,27 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
   };
 
   const handleVatRateChange = (index: number, value: string) => {
-    if (value === 'custom') {
-      setCustomVatRates(prev => ({ ...prev, [index]: true }));
-      handleItemChange(index, 'vatRate', 0);
-    } else if (value === 'np' || value === 'zw') {
-      setCustomVatRates(prev => ({ ...prev, [index]: false }));
-      handleItemChange(index, 'vatRate', 0);
-      handleItemChange(index, 'vatExemptionReason', value.toUpperCase());
+    if (value === "custom") {
+      setCustomVatRates((prev) => ({ ...prev, [index]: true }));
+      handleItemChange(index, "vatRate", 0);
+    } else if (value === "np" || value === "zw") {
+      setCustomVatRates((prev) => ({ ...prev, [index]: false }));
+      handleItemChange(index, "vatRate", 0);
+      handleItemChange(index, "vatExemptionReason", value.toUpperCase());
     } else {
-      setCustomVatRates(prev => ({ ...prev, [index]: false }));
-      handleItemChange(index, 'vatRate', parseFloat(value));
-      handleItemChange(index, 'vatExemptionReason', undefined);
+      setCustomVatRates((prev) => ({ ...prev, [index]: false }));
+      handleItemChange(index, "vatRate", parseFloat(value));
+      handleItemChange(index, "vatExemptionReason", "");
     }
   };
 
   const handleUnitChange = (index: number, value: string) => {
-    if (value === 'custom') {
-      setCustomUnits(prev => ({ ...prev, [index]: true }));
-      handleItemChange(index, 'unit', '');
+    if (value === "custom") {
+      setCustomUnits((prev) => ({ ...prev, [index]: true }));
+      handleItemChange(index, "unit", "");
     } else {
-      setCustomUnits(prev => ({ ...prev, [index]: false }));
-      handleItemChange(index, 'unit', value);
+      setCustomUnits((prev) => ({ ...prev, [index]: false }));
+      handleItemChange(index, "unit", value);
     }
   };
 
@@ -224,7 +240,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             <select
               id="type"
               value={formData.type}
-              onChange={(e) => handleInputChange("type", e.target.value as InvoiceType)}
+              onChange={(e) =>
+                handleInputChange("type", e.target.value as InvoiceType)
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
@@ -279,7 +297,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             <select
               id="sellerId"
               value={formData.sellerId}
-              onChange={(e) => handleInputChange("sellerId", parseInt(e.target.value))}
+              onChange={(e) =>
+                handleInputChange("sellerId", parseInt(e.target.value))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
@@ -303,7 +323,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             <select
               id="buyerId"
               value={formData.buyerId}
-              onChange={(e) => handleInputChange("buyerId", parseInt(e.target.value))}
+              onChange={(e) =>
+                handleInputChange("buyerId", parseInt(e.target.value))
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
@@ -347,7 +369,12 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             <select
               id="paymentMethod"
               value={formData.paymentMethod}
-              onChange={(e) => handleInputChange("paymentMethod", e.target.value as PaymentMethod)}
+              onChange={(e) =>
+                handleInputChange(
+                  "paymentMethod",
+                  e.target.value as PaymentMethod
+                )
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
@@ -397,7 +424,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                   type="text"
                   required
                   value={item.description}
-                  onChange={(e) => handleItemChange(index, "description", e.target.value)}
+                  onChange={(e) =>
+                    handleItemChange(index, "description", e.target.value)
+                  }
                   placeholder="Product or service description"
                   error={errors[`item_${index}_description`]}
                 />
@@ -406,8 +435,10 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                 id={`item_${index}_pkwiuCode`}
                 label="PKWiU"
                 type="text"
-                value={item.pkwiuCode || ''}
-                onChange={(e) => handleItemChange(index, "pkwiuCode", e.target.value)}
+                value={item.pkwiuCode || ""}
+                onChange={(e) =>
+                  handleItemChange(index, "pkwiuCode", e.target.value)
+                }
                 placeholder="62.01.1"
               />
             </div>
@@ -419,7 +450,13 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                 type="number"
                 required
                 value={item.quantity.toString()}
-                onChange={(e) => handleItemChange(index, "quantity", parseFloat(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleItemChange(
+                    index,
+                    "quantity",
+                    parseFloat(e.target.value) || 0
+                  )
+                }
                 min="0"
                 step="0.01"
                 error={errors[`item_${index}_quantity`]}
@@ -434,7 +471,7 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                 </label>
                 <select
                   id={`item_${index}_unit`}
-                  value={customUnits[index] ? 'custom' : item.unit}
+                  value={customUnits[index] ? "custom" : item.unit}
                   onChange={(e) => handleUnitChange(index, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
@@ -458,7 +495,9 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                   <input
                     type="text"
                     value={item.unit}
-                    onChange={(e) => handleItemChange(index, "unit", e.target.value)}
+                    onChange={(e) =>
+                      handleItemChange(index, "unit", e.target.value)
+                    }
                     placeholder={t("customUnit")}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mt-2"
                     required
@@ -472,7 +511,13 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                 type="number"
                 required
                 value={item.unitNetPrice.toString()}
-                onChange={(e) => handleItemChange(index, "unitNetPrice", parseFloat(e.target.value) || 0)}
+                onChange={(e) =>
+                  handleItemChange(
+                    index,
+                    "unitNetPrice",
+                    parseFloat(e.target.value) || 0
+                  )
+                }
                 min="0"
                 step="0.01"
                 error={errors[`item_${index}_unitNetPrice`]}
@@ -487,10 +532,15 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                 </label>
                 <select
                   id={`item_${index}_vatRate`}
-                  value={customVatRates[index] ? 'custom' : 
-                    (item.vatExemptionReason === 'NP' ? 'np' : 
-                    (item.vatExemptionReason === 'ZW' ? 'zw' : 
-                    item.vatRate.toString()))}
+                  value={
+                    customVatRates[index]
+                      ? "custom"
+                      : item.vatExemptionReason === "NP"
+                      ? "np"
+                      : item.vatExemptionReason === "ZW"
+                      ? "zw"
+                      : item.vatRate.toString()
+                  }
                   onChange={(e) => handleVatRateChange(index, e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   required
@@ -507,7 +557,13 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
                   <input
                     type="number"
                     value={item.vatRate.toString()}
-                    onChange={(e) => handleItemChange(index, "vatRate", parseFloat(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleItemChange(
+                        index,
+                        "vatRate",
+                        parseFloat(e.target.value) || 0
+                      )
+                    }
                     placeholder={t("customVatRate")}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mt-2"
                     min="0"
@@ -520,13 +576,16 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             </div>
 
             {/* VAT Exemption Reason for NP/ZW */}
-            {(item.vatExemptionReason === 'NP' || item.vatExemptionReason === 'ZW') && (
+            {(item.vatExemptionReason === "NP" ||
+              item.vatExemptionReason === "ZW") && (
               <FormField
                 id={`item_${index}_vatExemptionReason_detail`}
                 label={t("vatExemptionReason")}
                 type="text"
-                value={item.vatExemptionReason || ''}
-                onChange={(e) => handleItemChange(index, "vatExemptionReason", e.target.value)}
+                value={item.vatExemptionReason || ""}
+                onChange={(e) =>
+                  handleItemChange(index, "vatExemptionReason", e.target.value)
+                }
                 placeholder={t("enterVatExemptionReason")}
               />
             )}
@@ -534,15 +593,21 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
             <div className="grid grid-cols-3 gap-4 pt-2 border-t">
               <div>
                 <p className="text-sm text-gray-600">{t("netAmount")}</p>
-                <p className="font-medium">{calculateItemTotals(item).netAmount.toFixed(2)}</p>
+                <p className="font-medium">
+                  {calculateItemTotals(item).netAmount.toFixed(2)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("vatAmount")}</p>
-                <p className="font-medium">{calculateItemTotals(item).vatAmount.toFixed(2)}</p>
+                <p className="font-medium">
+                  {calculateItemTotals(item).vatAmount.toFixed(2)}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("grossAmount")}</p>
-                <p className="font-medium">{calculateItemTotals(item).grossAmount.toFixed(2)}</p>
+                <p className="font-medium">
+                  {calculateItemTotals(item).grossAmount.toFixed(2)}
+                </p>
               </div>
             </div>
           </div>
@@ -554,15 +619,21 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
         <div className="grid grid-cols-3 gap-4">
           <div>
             <p className="text-sm text-gray-600">{t("totalNet")}</p>
-            <p className="text-xl font-bold">{totals.totalNet.toFixed(2)} {formData.currency}</p>
+            <p className="text-xl font-bold">
+              {totals.totalNet.toFixed(2)} {formData.currency}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-600">{t("totalVat")}</p>
-            <p className="text-xl font-bold">{totals.totalVat.toFixed(2)} {formData.currency}</p>
+            <p className="text-xl font-bold">
+              {totals.totalVat.toFixed(2)} {formData.currency}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-600">{t("totalGross")}</p>
-            <p className="text-xl font-bold text-blue-600">{totals.totalGross.toFixed(2)} {formData.currency}</p>
+            <p className="text-xl font-bold text-blue-600">
+              {totals.totalGross.toFixed(2)} {formData.currency}
+            </p>
           </div>
         </div>
       </div>
@@ -588,4 +659,3 @@ export function InvoiceForm({ initialData, onSubmit }: InvoiceFormProps) {
     </form>
   );
 }
-

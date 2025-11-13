@@ -11,10 +11,7 @@ import {
 } from "@/components/molecules/Table";
 import { ConfirmationDialog } from "@/components/molecules/ConfirmationDialog";
 import { StatusBadge } from "@/components/atoms/StatusBadge";
-import {
-  useInvoices,
-  useDeleteInvoice,
-} from "@/hooks/useInvoices";
+import { useInvoices, useDeleteInvoice } from "@/hooks/useInvoices";
 import { useTableSorting } from "@/hooks/useTableSorting";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { useNotification } from "@/hooks/useNotification";
@@ -62,7 +59,11 @@ export function InvoicesPage() {
     searchFields: ["invoiceNumber", "notes", "currency", "paymentStatus"],
   });
 
-  const { sortState, sortedData: sortedInvoices, onSortChange } = useTableSorting<Invoice>({
+  const {
+    sortState,
+    sortedData: sortedInvoices,
+    onSortChange,
+  } = useTableSorting<Invoice>({
     data: filteredData,
   });
 
@@ -114,10 +115,7 @@ export function InvoicesPage() {
       key: "paymentStatus",
       header: t("paymentStatus"),
       render: (value) => (
-        <StatusBadge 
-          status={getPaymentStatusVariant(value as string)}
-          label={t(`paymentStatuses.${value as string}`)}
-        />
+        <StatusBadge status={getPaymentStatusVariant(value as string)} />
       ),
       sortable: true,
     },
@@ -139,7 +137,7 @@ export function InvoicesPage() {
       const blob = await generateInvoicePdf(detailedInvoice);
 
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `${invoice.invoiceNumber}.pdf`;
       document.body.appendChild(link);
@@ -150,7 +148,8 @@ export function InvoicesPage() {
       showSuccess(t("pdfDownloadSuccess"), invoice.invoiceNumber);
     } catch (error) {
       console.error("Failed to generate PDF:", error);
-      const errorMessage = error instanceof Error ? error.message : t("pdfDownloadError");
+      const errorMessage =
+        error instanceof Error ? error.message : t("pdfDownloadError");
       showError(t("pdfDownloadError"), errorMessage);
     } finally {
       setDownloadingPdfId(null);
@@ -204,8 +203,10 @@ export function InvoicesPage() {
     try {
       await deleteInvoiceMutation.mutateAsync(confirmationDialog.invoice.id);
       showSuccess(
-        t("invoiceDeletedSuccess"), 
-        `${confirmationDialog.invoice.invoiceNumber} ${t("invoiceRemovedFromSystem")}`
+        t("invoiceDeletedSuccess"),
+        `${confirmationDialog.invoice.invoiceNumber} ${t(
+          "invoiceRemovedFromSystem"
+        )}`
       );
       handleCloseConfirmation();
       refetch();
@@ -217,8 +218,10 @@ export function InvoicesPage() {
 
   const confirmationContent = {
     title: t("deleteInvoice"),
-    message: confirmationDialog.invoice 
-      ? t("deleteInvoiceConfirm", { number: confirmationDialog.invoice.invoiceNumber })
+    message: confirmationDialog.invoice
+      ? t("deleteInvoiceConfirm", {
+          number: confirmationDialog.invoice.invoiceNumber,
+        })
       : t("deleteInvoiceConfirm", { number: "" }),
   };
 
@@ -260,4 +263,3 @@ export function InvoicesPage() {
     </>
   );
 }
-

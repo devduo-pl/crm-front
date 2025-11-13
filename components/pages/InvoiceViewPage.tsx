@@ -25,7 +25,7 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
   const [isPaymentPopupOpen, setIsPaymentPopupOpen] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [paymentData, setPaymentData] = useState<RecordPaymentData>({
-    paymentDate: new Date().toISOString().split('T')[0],
+    paymentDate: new Date().toISOString().split("T")[0],
     amount: 0,
     currency: "PLN",
     method: "TRANSFER",
@@ -33,10 +33,12 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
     notes: "",
   });
 
-  const { data: invoice, isLoading, error, refetch } = useInvoice(
-    invoiceId,
-    "seller,buyer,items,payments,taxSummaries"
-  );
+  const {
+    data: invoice,
+    isLoading,
+    error,
+    refetch,
+  } = useInvoice(invoiceId, "seller,buyer,items,payments,taxSummaries");
   const recordPaymentMutation = useRecordPayment();
   const { showSuccess, showError } = useNotification();
 
@@ -52,7 +54,7 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
       const blob = await generateInvoicePdf(invoice);
 
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `${invoice.invoiceNumber}.pdf`;
       document.body.appendChild(link);
@@ -63,7 +65,8 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
       showSuccess(t("pdfDownloadSuccess"), invoice.invoiceNumber);
     } catch (error) {
       console.error("Failed to generate PDF:", error);
-      const errorMessage = error instanceof Error ? error.message : t("pdfDownloadError");
+      const errorMessage =
+        error instanceof Error ? error.message : t("pdfDownloadError");
       showError(t("pdfDownloadError"), errorMessage);
     } finally {
       setIsDownloadingPdf(false);
@@ -132,10 +135,7 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
             <p className="text-gray-600">{invoice.invoiceNumber}</p>
           </div>
           <div className="flex gap-2">
-            <Button 
-              onClick={() => router.push("/invoices")} 
-              variant="outline"
-            >
+            <Button onClick={() => router.push("/invoices")} variant="outline">
               {commonT("back")}
             </Button>
             <Button
@@ -166,15 +166,21 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("issueDate")}</p>
-                <p className="font-medium">{new Date(invoice.issueDate).toLocaleDateString()}</p>
+                <p className="font-medium">
+                  {new Date(invoice.issueDate).toLocaleDateString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("saleDate")}</p>
-                <p className="font-medium">{new Date(invoice.saleDate).toLocaleDateString()}</p>
+                <p className="font-medium">
+                  {new Date(invoice.saleDate).toLocaleDateString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("dueDate")}</p>
-                <p className="font-medium">{new Date(invoice.dueDate).toLocaleDateString()}</p>
+                <p className="font-medium">
+                  {new Date(invoice.dueDate).toLocaleDateString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("currency")}</p>
@@ -182,14 +188,15 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("paymentStatus")}</p>
-                <StatusBadge 
+                <StatusBadge
                   status={getPaymentStatusVariant(invoice.paymentStatus)}
-                  label={t(`paymentStatuses.${invoice.paymentStatus}`)}
                 />
               </div>
               <div>
                 <p className="text-sm text-gray-600">{t("paymentMethod")}</p>
-                <p className="font-medium">{t(`paymentMethods.${invoice.paymentMethod}`)}</p>
+                <p className="font-medium">
+                  {t(`paymentMethods.${invoice.paymentMethod}`)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -205,11 +212,19 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
               {invoice.sellerSnapshot ? (
                 <div className="space-y-2">
                   <p className="font-medium">{invoice.sellerSnapshot.name}</p>
-                  {invoice.sellerSnapshot.nip && <p className="text-sm">NIP: {invoice.sellerSnapshot.nip}</p>}
-                  {invoice.sellerSnapshot.address && <p className="text-sm">{invoice.sellerSnapshot.address}</p>}
-                  {invoice.sellerSnapshot.city && invoice.sellerSnapshot.postalCode && (
-                    <p className="text-sm">{invoice.sellerSnapshot.postalCode} {invoice.sellerSnapshot.city}</p>
+                  {invoice.sellerSnapshot.nip && (
+                    <p className="text-sm">NIP: {invoice.sellerSnapshot.nip}</p>
                   )}
+                  {invoice.sellerSnapshot.address && (
+                    <p className="text-sm">{invoice.sellerSnapshot.address}</p>
+                  )}
+                  {invoice.sellerSnapshot.city &&
+                    invoice.sellerSnapshot.postalCode && (
+                      <p className="text-sm">
+                        {invoice.sellerSnapshot.postalCode}{" "}
+                        {invoice.sellerSnapshot.city}
+                      </p>
+                    )}
                 </div>
               ) : (
                 <p className="text-gray-600">Seller ID: {invoice.sellerId}</p>
@@ -225,11 +240,19 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
               {invoice.buyerSnapshot ? (
                 <div className="space-y-2">
                   <p className="font-medium">{invoice.buyerSnapshot.name}</p>
-                  {invoice.buyerSnapshot.nip && <p className="text-sm">NIP: {invoice.buyerSnapshot.nip}</p>}
-                  {invoice.buyerSnapshot.address && <p className="text-sm">{invoice.buyerSnapshot.address}</p>}
-                  {invoice.buyerSnapshot.city && invoice.buyerSnapshot.postalCode && (
-                    <p className="text-sm">{invoice.buyerSnapshot.postalCode} {invoice.buyerSnapshot.city}</p>
+                  {invoice.buyerSnapshot.nip && (
+                    <p className="text-sm">NIP: {invoice.buyerSnapshot.nip}</p>
                   )}
+                  {invoice.buyerSnapshot.address && (
+                    <p className="text-sm">{invoice.buyerSnapshot.address}</p>
+                  )}
+                  {invoice.buyerSnapshot.city &&
+                    invoice.buyerSnapshot.postalCode && (
+                      <p className="text-sm">
+                        {invoice.buyerSnapshot.postalCode}{" "}
+                        {invoice.buyerSnapshot.city}
+                      </p>
+                    )}
                 </div>
               ) : (
                 <p className="text-gray-600">Buyer ID: {invoice.buyerId}</p>
@@ -263,7 +286,9 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
                       <td className="py-2">
                         <div>{item.description}</div>
                         {item.pkwiuCode && (
-                          <div className="text-xs text-gray-500">PKWiU: {item.pkwiuCode}</div>
+                          <div className="text-xs text-gray-500">
+                            PKWiU: {item.pkwiuCode}
+                          </div>
                         )}
                         {item.vatExemptionReason && (
                           <div className="text-xs text-gray-500">
@@ -271,39 +296,63 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
                           </div>
                         )}
                       </td>
-                      <td className="py-2 text-right">{Number(item.quantity)} {item.unit}</td>
-                      <td className="py-2 text-right">{Number(item.unitNetPrice).toFixed(2)}</td>
+                      <td className="py-2 text-right">
+                        {Number(item.quantity)} {item.unit}
+                      </td>
+                      <td className="py-2 text-right">
+                        {Number(item.unitNetPrice).toFixed(2)}
+                      </td>
                       <td className="py-2 text-right">
                         {item.vatExemptionReason ? (
-                          <span className="text-sm">{item.vatExemptionReason}</span>
+                          <span className="text-sm">
+                            {item.vatExemptionReason}
+                          </span>
                         ) : (
                           <span>{Number(item.vatRate).toFixed(0)}%</span>
                         )}
                       </td>
-                      <td className="py-2 text-right">{Number(item.netAmount).toFixed(2)}</td>
-                      <td className="py-2 text-right">{Number(item.vatAmount).toFixed(2)}</td>
-                      <td className="py-2 text-right font-medium">{Number(item.grossAmount).toFixed(2)}</td>
+                      <td className="py-2 text-right">
+                        {Number(item.netAmount).toFixed(2)}
+                      </td>
+                      <td className="py-2 text-right">
+                        {Number(item.vatAmount).toFixed(2)}
+                      </td>
+                      <td className="py-2 text-right font-medium">
+                        {Number(item.grossAmount).toFixed(2)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot className="font-medium">
                   <tr className="border-t-2">
-                    <td colSpan={4} className="pt-2 text-right">{t("totalNet")}:</td>
-                    <td className="pt-2 text-right">{Number(invoice.totalNet).toFixed(2)} {invoice.currency}</td>
+                    <td colSpan={4} className="pt-2 text-right">
+                      {t("totalNet")}:
+                    </td>
+                    <td className="pt-2 text-right">
+                      {Number(invoice.totalNet).toFixed(2)} {invoice.currency}
+                    </td>
                     <td className="pt-2 text-right"></td>
                     <td className="pt-2 text-right"></td>
                   </tr>
                   <tr>
-                    <td colSpan={4} className="text-right">{t("totalVat")}:</td>
-                    <td className="text-right">{Number(invoice.totalVat).toFixed(2)} {invoice.currency}</td>
+                    <td colSpan={4} className="text-right">
+                      {t("totalVat")}:
+                    </td>
+                    <td className="text-right">
+                      {Number(invoice.totalVat).toFixed(2)} {invoice.currency}
+                    </td>
                     <td className="text-right"></td>
                     <td className="text-right"></td>
                   </tr>
                   <tr className="text-lg">
-                    <td colSpan={4} className="text-right">{t("totalGross")}:</td>
+                    <td colSpan={4} className="text-right">
+                      {t("totalGross")}:
+                    </td>
                     <td className="text-right"></td>
                     <td className="text-right"></td>
-                    <td className="text-right">{Number(invoice.totalGross).toFixed(2)} {invoice.currency}</td>
+                    <td className="text-right">
+                      {Number(invoice.totalGross).toFixed(2)} {invoice.currency}
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -320,24 +369,38 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
             <CardContent>
               <div className="space-y-2">
                 {invoice.payments.map((payment) => (
-                  <div key={payment.id} className="flex justify-between items-center border-b pb-2">
+                  <div
+                    key={payment.id}
+                    className="flex justify-between items-center border-b pb-2"
+                  >
                     <div>
-                      <p className="font-medium">{new Date(payment.paymentDate).toLocaleDateString()}</p>
+                      <p className="font-medium">
+                        {new Date(payment.paymentDate).toLocaleDateString()}
+                      </p>
                       <p className="text-sm text-gray-600">
                         {t(`paymentMethods.${payment.method}`)}
-                        {payment.transactionReference && ` - ${payment.transactionReference}`}
+                        {payment.transactionReference &&
+                          ` - ${payment.transactionReference}`}
                       </p>
                     </div>
-                    <p className="font-medium">{Number(payment.amount).toFixed(2)} {payment.currency}</p>
+                    <p className="font-medium">
+                      {Number(payment.amount).toFixed(2)} {payment.currency}
+                    </p>
                   </div>
                 ))}
                 <div className="flex justify-between items-center pt-2 font-medium">
                   <p>{t("totalPaid")}:</p>
-                  <p>{Number(invoice.totalPaid || 0).toFixed(2)} {invoice.currency}</p>
+                  <p>
+                    {Number(invoice.totalPaid || 0).toFixed(2)}{" "}
+                    {invoice.currency}
+                  </p>
                 </div>
                 <div className="flex justify-between items-center font-medium">
                   <p>{t("remainingAmount")}:</p>
-                  <p>{Number(invoice.remainingAmount || 0).toFixed(2)} {invoice.currency}</p>
+                  <p>
+                    {Number(invoice.remainingAmount || 0).toFixed(2)}{" "}
+                    {invoice.currency}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -370,7 +433,9 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
             label={t("paymentDate")}
             type="date"
             value={paymentData.paymentDate}
-            onChange={(e) => setPaymentData({ ...paymentData, paymentDate: e.target.value })}
+            onChange={(e) =>
+              setPaymentData({ ...paymentData, paymentDate: e.target.value })
+            }
             required
           />
           <FormField
@@ -378,31 +443,49 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
             label={t("amount")}
             type="number"
             value={paymentData.amount.toString()}
-            onChange={(e) => setPaymentData({ ...paymentData, amount: parseFloat(e.target.value) || 0 })}
+            onChange={(e) =>
+              setPaymentData({
+                ...paymentData,
+                amount: parseFloat(e.target.value) || 0,
+              })
+            }
             required
             step="0.01"
           />
           <div>
-            <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="currency"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               {t("currency")}
             </label>
             <input
               id="currency"
               type="text"
               value={paymentData.currency}
-              onChange={(e) => setPaymentData({ ...paymentData, currency: e.target.value })}
+              onChange={(e) =>
+                setPaymentData({ ...paymentData, currency: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             />
           </div>
           <div>
-            <label htmlFor="method" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="method"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               {t("paymentMethod")}
             </label>
             <select
               id="method"
               value={paymentData.method}
-              onChange={(e) => setPaymentData({ ...paymentData, method: e.target.value as PaymentMethod })}
+              onChange={(e) =>
+                setPaymentData({
+                  ...paymentData,
+                  method: e.target.value as PaymentMethod,
+                })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="TRANSFER">{t("paymentMethods.TRANSFER")}</option>
@@ -416,18 +499,24 @@ export function InvoiceViewPage({ invoiceId }: InvoiceViewPageProps) {
             label={t("transactionReference")}
             type="text"
             value={paymentData.transactionReference || ""}
-            onChange={(e) => setPaymentData({ ...paymentData, transactionReference: e.target.value })}
+            onChange={(e) =>
+              setPaymentData({
+                ...paymentData,
+                transactionReference: e.target.value,
+              })
+            }
           />
           <FormField
             id="notes"
             label={t("notes")}
             type="textarea"
             value={paymentData.notes || ""}
-            onChange={(e) => setPaymentData({ ...paymentData, notes: e.target.value })}
+            onChange={(e) =>
+              setPaymentData({ ...paymentData, notes: e.target.value })
+            }
           />
         </div>
       </Popup>
     </>
   );
 }
-

@@ -25,6 +25,16 @@ export function TableActionsDropdown<T = Record<string, unknown>>({
     return null;
   }
 
+  const resolveState = (
+    value: boolean | ((row: T) => boolean) | undefined
+  ): boolean => {
+    if (typeof value === "function") {
+      return value(row);
+    }
+
+    return value ?? false;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,15 +44,30 @@ export function TableActionsDropdown<T = Record<string, unknown>>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {filteredActions.map((action, index) => (
-          <DropdownMenuItem
-            key={index}
-            onClick={() => action.onClick(row)}
-            variant={action.variant === "destructive" ? "destructive" : "default"}
-          >
-            {action.label}
-          </DropdownMenuItem>
-        ))}
+        {filteredActions.map((action, index) => {
+          const isDisabled = resolveState(action.disabled);
+          const isLoading = resolveState(action.loading);
+          const isActionDisabled = isDisabled || isLoading;
+
+          return (
+            <DropdownMenuItem
+              key={index}
+              onClick={() => {
+                if (isActionDisabled) {
+                  return;
+                }
+
+                action.onClick(row);
+              }}
+              disabled={isActionDisabled}
+              variant={
+                action.variant === "destructive" ? "destructive" : "default"
+              }
+            >
+              {isLoading ? `${action.label}…` : action.label}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

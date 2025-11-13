@@ -14,6 +14,8 @@ export interface TableAction<T = Record<string, unknown>> {
   variant?: "default" | "outline" | "destructive" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   condition?: (row: T) => boolean;
+  disabled?: boolean | ((row: T) => boolean);
+  loading?: boolean | ((row: T) => boolean);
 }
 
 export interface PaginationInfo {

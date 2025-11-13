@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@/types/user";
@@ -45,10 +46,10 @@ export async function getCurrentUserServer(): Promise<User | null> {
  */
 export function hasPermission(user: User | null, permission: string): boolean {
   if (!user || !user.permissions) return false;
-  
+
   // Check for master permission that grants full access
   if (user.permissions.includes("full_nav_access")) return true;
-  
+
   return user.permissions.includes(permission);
 }
 
@@ -60,10 +61,10 @@ export function hasAnyPermission(
   permissions: string[]
 ): boolean {
   if (!user || !user.permissions) return false;
-  
+
   // Check for master permission that grants full access
   if (user.permissions.includes("full_nav_access")) return true;
-  
+
   return permissions.some((permission) =>
     user.permissions!.includes(permission)
   );
@@ -77,10 +78,10 @@ export function hasAllPermissions(
   permissions: string[]
 ): boolean {
   if (!user || !user.permissions) return false;
-  
+
   // Check for master permission that grants full access
   if (user.permissions.includes("full_nav_access")) return true;
-  
+
   return permissions.every((permission) =>
     user.permissions!.includes(permission)
   );
@@ -148,7 +149,7 @@ export async function requireAllPermissions(
 
 /**
  * Higher-order function to protect a page with permission checks
- * 
+ *
  * @example
  * ```tsx
  * export default withPermission("manage_roles", RolesPage);
@@ -160,13 +161,13 @@ export function withPermission<P extends object>(
 ) {
   return async function ProtectedComponent(props: P) {
     await requirePermission(permission);
-    return <Component {...props} />;
+    return createElement(Component, props);
   };
 }
 
 /**
  * Higher-order function to protect a page with any of the provided permissions
- * 
+ *
  * @example
  * ```tsx
  * export default withAnyPermission(["view_users", "manage_users"], UsersPage);
@@ -178,7 +179,6 @@ export function withAnyPermission<P extends object>(
 ) {
   return async function ProtectedComponent(props: P) {
     await requireAnyPermission(permissions);
-    return <Component {...props} />;
+    return createElement(Component, props);
   };
 }
-
