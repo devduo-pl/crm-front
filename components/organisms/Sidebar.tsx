@@ -23,6 +23,7 @@ interface NavigationItem {
   href: string;
   icon: React.ReactNode;
   permission?: string; // Permission required to view this item
+  group: string;
 }
 
 export function AppSidebar() {
@@ -36,36 +37,42 @@ export function AppSidebar() {
       href: "/dashboard",
       icon: <Icons.Dashboard />,
       permission: "view_dashboard",
+      group: t("main"),
     },
     {
       name: t("users"),
       href: "/users",
       icon: <Icons.Users />,
       permission: "view_users",
+      group: t("main"),
     },
     {
       name: t("companies"),
       href: "/companies",
       icon: <Icons.Companies />,
       permission: "view_companies",
+      group: t("main"),
     },
     {
       name: t("invoices"),
       href: "/invoices",
       icon: <Icons.Documents />,
       permission: "view_invoices",
+      group: t("main"),
     },
     {
       name: t("roles"),
       href: "/roles",
       icon: <Icons.Shield />,
       permission: "manage_roles",
+      group: t("admin"),
     },
     {
       name: t("permissions"),
       href: "/permissions",
       icon: <Icons.Shield />,
       permission: "manage_permissions",
+      group: t("admin"),
     },
   ];
 
@@ -83,6 +90,13 @@ export function AppSidebar() {
     // Otherwise, check if user has the required permission
     return hasPermission(item.permission);
   });
+
+  const mainNavigation = filteredNavigation.filter(
+    (item) => item.group === t("main")
+  );
+  const adminNavigation = filteredNavigation.filter(
+    (item) => item.group === t("admin")
+  );
 
   return (
     <Sidebar>
@@ -106,7 +120,24 @@ export function AppSidebar() {
           <SidebarGroupLabel>{t("main")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {filteredNavigation.map((item) => (
+              {mainNavigation.map((item) => (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href}>
+                      {item.icon}
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>{t("admin")}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminNavigation.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
                     <Link href={item.href}>
