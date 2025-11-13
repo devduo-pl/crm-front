@@ -65,7 +65,7 @@ export async function getUserAction(id: number) {
  */
 export async function createUserAction(userData: UserCreateData) {
   try {
-    const data = await fetchApiServer<User>("/users", {
+    const data = await fetchApiServer<User>("/auth/create-account", {
       method: "POST",
       body: JSON.stringify(userData),
     });

@@ -31,7 +31,7 @@ export const usersService = {
    * Create a new user
    */
   createUser: async (data: UserCreateData): Promise<User> => {
-    return fetchApi<User>("/users", {
+    return fetchApi<User>("/auth/create-account", {
       method: "POST",
       body: JSON.stringify(data),
     });
